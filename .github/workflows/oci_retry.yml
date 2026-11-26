@@ -1,0 +1,67 @@
+name: Oracle server retry (hourly until the free server exists)
+# Presses "Apply" on the saved Oracle stack "polybot" until Oracle has free capacity,
+# then switches itself off. Uses an Oracle API key stored in this repo's secrets.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+permissions:
+  actions: write
+  contents: read
+concurrency: oci-retry
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TENANCY: ${{ secrets.OCI_TENANCY_OCID }}
+      STACK: ${{ secrets.OCI_STACK_OCID }}
+      OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING: "True"
+    steps:
+      - run: pip install -q oci-cli
+      - name: Oracle credentials
+        run: |
+          mkdir -p ~/.oci
+          printf '%s\n' "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/key.pem
+          chmod 600 ~/.oci/key.pem
+          cat > ~/.oci/config <<CFG
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=ap-hyderabad-1
+          key_file=~/.oci/key.pem
+          CFG
+          chmod 600 ~/.oci/config
+      - name: Already have a server?
+        id: check
+        run: |
+          n=0
+          for st in RUNNING STARTING PROVISIONING; do
+            c=$(oci compute instance list --compartment-id "$TENANCY" --display-name polybot --lifecycle-state $st --query 'length(data)' --raw-output 2>/dev/null || echo 0)
+            n=$((n + ${c:-0}))
+          done
+          echo "existing polybot servers: $n"
+          echo "have=$n" >> $GITHUB_OUTPUT
+      - name: Done - switch this retry off
+        if: steps.check.outputs.have != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Server exists. Disabling the hourly retry."
+          gh workflow disable oci_retry.yml -R ${{ github.repository }}
+      - name: Apply the stack
+        if: steps.check.outputs.have == '0'
+        run: |
+          busy=$(oci resource-manager job list --stack-id "$STACK" --all --query "length(data[?\"lifecycle-state\"=='IN_PROGRESS' || \"lifecycle-state\"=='ACCEPTED'])" --raw-output)
+          if [ "${busy:-0}" != "0" ]; then echo "A job is already running; skipping this hour."; exit 0; fi
+          job=$(oci resource-manager job create-apply-job --stack-id "$STACK" --execution-plan-strategy AUTO_APPROVED --display-name "auto-retry-$(date -u +%m%d-%H%M)" --query 'data.id' --raw-output)
+          echo "started apply job $job"
+          for i in $(seq 1 60); do
+            s=$(oci resource-manager job get --job-id "$job" --query 'data."lifecycle-state"' --raw-output)
+            case "$s" in SUCCEEDED|FAILED|CANCELED) break;; esac
+            sleep 15
+          done
+          echo "job result: $s"
+          oci resource-manager job get-job-logs --job-id "$job" --all --query 'data[-12:].message' --raw-output 2>/dev/null | tail -c 3000 || true
+          if [ "$s" = "SUCCEEDED" ]; then echo "SERVER CREATED"; fi
