@@ -14,25 +14,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      TENANCY: ${{ secrets.OCI_TENANCY_OCID }}
       STACK: ${{ secrets.OCI_STACK_OCID }}
       OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING: "True"
     steps:
       - run: pip install -q oci-cli
       - name: Oracle credentials
+        env:
+          CFG: ${{ secrets.OCI_CONFIG }}
+          KEY: ${{ secrets.OCI_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.oci
-          printf '%s\n' "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/key.pem
+          printf '%s\n' "$KEY" | tr -d '\r' > ~/.oci/key.pem
           chmod 600 ~/.oci/key.pem
-          cat > ~/.oci/config <<CFG
-          [DEFAULT]
-          user=${{ secrets.OCI_USER_OCID }}
-          fingerprint=${{ secrets.OCI_FINGERPRINT }}
-          tenancy=${{ secrets.OCI_TENANCY_OCID }}
-          region=ap-hyderabad-1
-          key_file=~/.oci/key.pem
-          CFG
+          # the console's "Copy" button may give one long line; put each setting on its own line
+          printf '%s\n' "$CFG" | tr -d '\r' | sed -E 's/ (user|fingerprint|tenancy|region|key_file)=/\n\1=/g' \
+            | grep -E '^(\[DEFAULT\]|user=|fingerprint=|tenancy=)' > ~/.oci/config
+          grep -q '^\[DEFAULT\]' ~/.oci/config || sed -i '1i [DEFAULT]' ~/.oci/config
+          sed -i 's/^\[DEFAULT\] */[DEFAULT]\n/' ~/.oci/config
+          printf 'region=ap-hyderabad-1\nkey_file=~/.oci/key.pem\n' >> ~/.oci/config
           chmod 600 ~/.oci/config
+          echo "TENANCY=$(grep '^tenancy=' ~/.oci/config | cut -d= -f2 | tr -d ' ')" >> $GITHUB_ENV
+          sed -E 's/(ocid1\.[a-z]+\.oc1\.\.).{6}.*/\1…/; s/(fingerprint=..).*/\1…/' ~/.oci/config
       - name: Already have a server?
         id: check
         run: |
