@@ -3,7 +3,7 @@ name: Oracle server retry (hourly until the free server exists)
 # then switches itself off. Uses an Oracle API key stored in this repo's secrets.
 on:
   schedule:
-    - cron: "17 * * * *"
+    - cron: "41 * * * *"
   workflow_dispatch:
 permissions:
   actions: write
