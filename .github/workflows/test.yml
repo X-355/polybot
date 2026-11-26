@@ -1,0 +1,15 @@
+name: Test run (15 minutes, paper only)
+on: workflow_dispatch
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q -r requirements.txt
+      - run: python -u bot.py
+        env:
+          POLYBOT_DATA: /tmp/polybot-data
+          POLYBOT_TEST_MINUTES: "15"
