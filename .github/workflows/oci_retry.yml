@@ -65,5 +65,5 @@ jobs:
             sleep 15
           done
           echo "job result: $s"
-          oci resource-manager job get-job-logs --job-id "$job" --all --query 'data[-12:].message' --raw-output 2>/dev/null | tail -c 3000 || true
+          oci resource-manager job get-job-logs --job-id "$job" --all --query 'data[].message' --raw-output 2>/dev/null | grep -iE 'error|capacity|limit|quota|500-|400-|404-' | head -8 || true
           if [ "$s" = "SUCCEEDED" ]; then echo "SERVER CREATED"; fi
