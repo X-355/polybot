@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 18:22:44",
+ "updated_utc": "2026-11-27 18:32:34",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -43,9 +43,9 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 64,
+   "total": 68,
    "trade": 1,
-   "no_trade": 49,
+   "no_trade": 53,
    "skipped": 14,
    "skipped_reasons": {
     "price feed stale": 14
@@ -260,17 +260,12 @@
   }
  ],
  "status": {
-  "started_utc": "2026-11-27 16:20:03",
-  "errors": [
-   "2026-11-27 16:45:46 order book connection: ConnectionClosedError(Close(code=1013, reason='slow consumer: send buffer full'), Close(code=1013, reason='slow consumer: send buffer full'), True)",
-   "2026-11-27 17:31:04 order book connection: ConnectionClosedError(Close(code=1013, reason='slow consumer: send buffer full'), Close(code=1013, reason='slow consumer: send buffer full'), True)"
-  ],
-  "decisions": 34,
-  "trades": 1,
-  "settled": 1,
-  "skipped": {
-   "price feed stale": 14
-  },
+  "started_utc": "2026-11-27 18:30:03",
+  "errors": [],
+  "decisions": 0,
+  "trades": 0,
+  "settled": 0,
+  "skipped": {},
   "model": {
    "trained_days": 73,
    "first_day": "2026-09-10",
@@ -280,17 +275,36 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.122,
-   "p95": 0.663,
-   "max": 0.718,
+   "p50": 0.229,
+   "p95": 0.576,
+   "max": 0.647,
    "n": 3000
   },
+  "price_feed_gap_s": {
+   "p50": 1.115,
+   "p95": 1.493,
+   "max": 1.926,
+   "n": 148
+  },
+  "price_feed_obs_lag_s": {
+   "p50": 1.49,
+   "p95": 1.827,
+   "max": 2.277,
+   "n": 149
+  },
+  "price_feed_msgs": {
+   "crypto_prices_twap_sixty/list": 1,
+   "crypto_prices/list": 1,
+   "crypto_prices_chainlink": 149,
+   "crypto_prices_twap_sixty": 149
+  },
+  "price_feed_last_obs_age_s": 1.2,
   "load_avg": [
-   0.06,
-   0.04,
+   0.02,
+   0.03,
    0.0
   ],
-  "price_feed_age_s": 0.5,
+  "price_feed_age_s": 0.1,
   "order_book_age_s": 0.0
  }
 }
