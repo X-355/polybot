@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 16:02:34",
+ "updated_utc": "2026-11-27 16:22:34",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -17,7 +17,14 @@
   },
   "stake_fits_at_best_ask_pct": null,
   "excluded_trades": 6,
-  "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s"
+  "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
+  "checks": {
+   "total": 16,
+   "trade": 0,
+   "no_trade": 16,
+   "skipped": 0,
+   "skipped_reasons": {}
+  }
  },
  "overall": {
   "trades": 0
@@ -188,7 +195,7 @@
   }
  ],
  "status": {
-  "started_utc": "2026-11-27 16:00:03",
+  "started_utc": "2026-11-27 16:20:03",
   "errors": [],
   "decisions": 0,
   "trades": 0,
@@ -203,17 +210,17 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.1,
-   "p95": 0.124,
-   "max": 0.186,
+   "p50": 0.099,
+   "p95": 0.106,
+   "max": 0.146,
    "n": 3000
   },
   "load_avg": [
-   0.08,
-   0.06,
-   0.07
+   0.04,
+   0.03,
+   0.03
   ],
-  "price_feed_age_s": 0.0,
+  "price_feed_age_s": 0.7,
   "order_book_age_s": 0.0
  }
 }
