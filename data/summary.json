@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 12:12:34",
+ "updated_utc": "2026-11-27 12:42:36",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -19,7 +19,7 @@
  "status": {
   "started_utc": "2026-11-27 12:10:03",
   "errors": [],
-  "decisions": 0,
+  "decisions": 12,
   "trades": 0,
   "settled": 0,
   "skipped": {},
@@ -30,7 +30,7 @@
    "reference_max_diff": 0.0
   },
   "pending": 0,
-  "price_feed_age_s": 0.1,
+  "price_feed_age_s": 0.6,
   "order_book_age_s": 0.0
  }
 }
