@@ -46,6 +46,8 @@ class State:
         self.cur = None                      # current market dict
         self.done = set()                    # (start, left) already decided
         self.pending = self._load("pending.json", [])
+        self.results = self._load("results.json", {})    # window start (str) -> "Up"/"Down"
+        self.need = set()                                 # decided windows still waiting for a result
         self.status = dict(started_utc=utc(), errors=[], decisions=0, trades=0, settled=0, skipped={})
         self.model_ok = False
 
@@ -57,6 +59,7 @@ class State:
 
     def save_pending(self):
         json.dump(self.pending, open(os.path.join(DATA, "pending.json"), "w"))
+        json.dump(self.results, open(os.path.join(DATA, "results.json"), "w"))
 
     def err(self, msg):
         log.warning(msg)
@@ -305,21 +308,34 @@ async def scheduler():
 # ---------------------------------------------------------------- settlement and publishing
 async def settler():
     while True:
+        for t in S.pending:                               # results are only needed for windows we traded
+            if str(t["window_start"]) not in S.results:
+                S.need.add(int(t["window_start"]))
         await asyncio.sleep(30)
-        still = []
-        for t in S.pending:
-            start = int(t["window_start"])
-            if time.time() < start + 360:
-                still.append(t); continue
+        now = time.time()
+        for start in sorted(S.need)[:20]:                 # a few lookups per round, gently
+            if now < start + 360:
+                continue
             try:
                 res = (await asyncio.to_thread(gamma_market, start) or {}).get("result")
             except Exception as e:
                 S.err(f"result lookup: {e!r}"); res = None
+            if res:
+                S.results[str(start)] = res
+                S.need.discard(start)
+            elif now > start + 6 * 3600:
+                S.need.discard(start)
+                S.err(f"no result for window {start} after 6 h")
+        still = []
+        for t in S.pending:
+            start = int(t["window_start"])
+            res = S.results.get(str(start))
             if res is None:
-                if time.time() > start + 6 * 3600:
-                    S.err(f"no result for window {start} after 6 h; dropped")
+                if now > start + 6 * 3600:
+                    S.err(f"trade in window {start} dropped: no result after 6 h")
                 else:
                     still.append(t)
+                    S.need.add(start)
                 continue
             win = 1 if res == t["side"] else 0
             price = float(t["price"]); shares = STAKE / price
@@ -332,6 +348,67 @@ async def settler():
             S.status["settled"] += 1
         S.pending = still
         S.save_pending()
+
+
+# ---------------------------------------------------------------- the pre-registered test
+MIN_TRADES = 300      # no verdict before this many settled trades
+MAX_TRADES = 1000     # by this many, an unproven edge is called "not proven" and the test ends
+
+
+def ret_per_dollar(price, win):
+    return (win - price - F.fee(price)) / price
+
+
+def conservative(r):
+    """Score at the WORSE of the price at the signal and the price one second later."""
+    p = float(r["price"])
+    if r.get("price_1s") not in (None, ""):
+        p = max(p, float(r["price_1s"]))
+    return ret_per_dollar(min(p, 0.999), int(r["win"]))
+
+
+def cluster_ci(rows, f):
+    """Mean return per $1 and a 95% interval that treats the two checks in one window as related."""
+    by = {}
+    for r in rows:
+        by.setdefault(r["window_start"], []).append(f(r))
+    n = sum(len(v) for v in by.values()); g = len(by)
+    if n == 0:
+        return None
+    m = sum(sum(v) for v in by.values()) / n
+    if g < 2:
+        return dict(mean=round(m, 4), lo=None, hi=None, n=n, windows=g)
+    var = sum((sum(v) - m * len(v)) ** 2 for v in by.values()) / n ** 2 * g / (g - 1)
+    se = math.sqrt(var)
+    return dict(mean=round(m, 4), lo=round(m - 1.96 * se, 4), hi=round(m + 1.96 * se, 4), n=n, windows=g)
+
+
+def controls(rows):
+    """Same windows, same moments: what a coin flip and 'always buy the favourite' would have made."""
+    def side_ret(r, side):
+        a = float(r["up_ask"] if side == "Up" else r["dn_ask"])
+        return ret_per_dollar(min(max(a, 0.001), 0.999), 1 if r["result"] == side else 0)
+    def fav(r):
+        mid_up = (float(r["up_bid"]) + float(r["up_ask"])) / 2
+        return side_ret(r, "Up" if mid_up >= 0.5 else "Down")
+    def coin(r):
+        return (side_ret(r, "Up") + side_ret(r, "Down")) / 2
+    return dict(favourite=cluster_ci(rows, fav), coin_flip=cluster_ci(rows, coin))
+
+
+def verdict(rows):
+    c = cluster_ci(rows, conservative)
+    n = len(rows)
+    if not c or n < MIN_TRADES:
+        return dict(state="collecting", text=f"Collecting: {n} of {MIN_TRADES} trades needed before any verdict.", stats=c)
+    ctl = controls(rows)["favourite"]
+    if c["lo"] is not None and c["lo"] > 0 and (ctl is None or c["mean"] > ctl["mean"]):
+        return dict(state="edge", text="Edge confirmed: profitable after fees at the worse fill, 95% interval above zero, and better than always buying the favourite.", stats=c)
+    if c["hi"] is not None and c["hi"] < 0:
+        return dict(state="no_edge", text="No edge: the bot loses money after fees (95% interval below zero).", stats=c)
+    if n >= MAX_TRADES:
+        return dict(state="not_proven", text=f"Not proven after {n} trades: results are within noise. The test ends here.", stats=c)
+    return dict(state="undecided", text=f"Undecided after {n} trades: still within noise, keep collecting (up to {MAX_TRADES}).", stats=c)
 
 
 def summarize():
@@ -348,10 +425,17 @@ def summarize():
                     avg_price=round(sum(float(r["price"]) for r in rs) / len(rs), 4), staked_usd=stake,
                     pnl_usd=round(pnl, 2), return_pct=round(pnl / stake * 100, 2),
                     return_1s_pct=round(sum(float(r["pnl_1s_usd"]) for r in r1) / (STAKE * len(r1)) * 100, 2) if r1 else None)
-    out = dict(updated_utc=utc(), stake_per_trade_usd=STAKE, fee_coef=F.FEE_COEF, edge=F.EDGE,
+    fits = [r for r in rows if float(r["ask_size"] or 0) * float(r["price"]) >= STAKE]
+    test = dict(rule=(f"Pre-registered (27 Nov 2026): no verdict before {MIN_TRADES} settled trades. Trades are scored at the worse of "
+                      "the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval "
+                      "of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same "
+                      f"windows. Interval below zero = no edge. Still unclear at {MAX_TRADES} trades = not proven, test ends."),
+                verdict=verdict(rows), conservative=cluster_ci(rows, conservative), controls=controls(rows),
+                stake_fits_at_best_ask_pct=round(100 * len(fits) / len(rows), 1) if rows else None)
+    out = dict(updated_utc=utc(), stake_per_trade_usd=STAKE, fee_coef=F.FEE_COEF, edge=F.EDGE, test=test,
                overall=block(rows), by_left={str(l): block([r for r in rows if int(r["left"]) == l]) for l in F.LEFTS},
                first_trade_utc=rows[0]["decided_utc"] if rows else None, recent=rows[-50:][::-1],
-               status=dict(S.status, pending=len(S.pending),
+               status=dict(S.status, pending=len(S.pending), awaiting_results=len(S.need),
                            price_feed_age_s=round(time.time() - S.cl_recv, 1) if S.cl_recv else None,
                            order_book_age_s=round(time.time() - S.book_recv, 1) if S.book_recv else None))
     return out

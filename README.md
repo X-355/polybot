@@ -18,4 +18,19 @@ Polymarket's official result.
 **Files:** `data/summary.json` (totals), `data/trades.csv` (every paper trade), `data/decisions.csv` (every check,
 including skipped and no-trade ones), updated every 30 minutes by the server.
 
+## The test, decided in advance (27 November 2026)
+
+So the result can be trusted whichever way it goes, the rules were fixed before the results came in:
+
+- **No verdict before 300 settled paper trades.** Early wins or losses are noise.
+- **Pessimistic scoring:** every trade is scored at the *worse* of the price when the bot decided and the price one
+  second later, after Polymarket's taker fee (0.05 × p × (1 − p) per share). The share of trades where a $10 stake
+  would not fit at the best price is reported too.
+- **Edge confirmed** only if the 95% interval of return per $1 (the two checks in one window treated as related)
+  is above zero **and** the bot beats simply buying the favourite in the same windows at the same moments.
+- **No edge** if the interval is below zero. **Not proven** if still unclear at 1,000 trades; the test then ends.
+- A watchdog opens a GitHub issue (and emails the owner) if the bot stops reporting for 2 hours.
+
+The running verdict is in `data/summary.json` under `test`.
+
 Research only, not financial advice.

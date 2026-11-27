@@ -1,0 +1,28 @@
+name: Watchdog (alert if the bot stops reporting)
+on:
+  schedule:
+    - cron: "23 */2 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          age=$(python3 -c "import json,datetime as d;u=json.load(open('data/summary.json'))['updated_utc'];t=d.datetime.strptime(u,'%Y-%m-%d %H:%M:%S').replace(tzinfo=d.timezone.utc);print(int((d.datetime.now(d.timezone.utc)-t).total_seconds()//60))")
+          echo "last report $age minutes ago"
+          open=$(gh issue list -R ${{ github.repository }} --label bot-down --state open --json number -q '.[0].number')
+          gh label create bot-down -R ${{ github.repository }} --color B60205 --description "Polybot stopped reporting" 2>/dev/null || true
+          if [ "$age" -gt 120 ]; then
+            if [ -z "$open" ]; then
+              gh issue create -R ${{ github.repository }} --label bot-down --title "Polybot has not reported for $age minutes" \
+                --body "The paper bot normally publishes every 30 minutes. Last report: $age minutes ago. Check the Lightsail server (Mumbai) is Running; if it is, open its browser terminal and run: sudo systemctl status polybot --no-pager; sudo journalctl -u polybot -n 40 --no-pager"
+            fi
+          elif [ -n "$open" ]; then
+            gh issue close "$open" -R ${{ github.repository }} --comment "Reporting again (last report $age minutes ago)."
+          fi
