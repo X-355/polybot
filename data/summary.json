@@ -1,0 +1,36 @@
+{
+ "updated_utc": "2026-11-27 12:12:34",
+ "stake_per_trade_usd": 10.0,
+ "fee_coef": 0.05,
+ "edge": 0.02,
+ "overall": {
+  "trades": 0
+ },
+ "by_left": {
+  "30": {
+   "trades": 0
+  },
+  "10": {
+   "trades": 0
+  }
+ },
+ "first_trade_utc": null,
+ "recent": [],
+ "status": {
+  "started_utc": "2026-11-27 12:10:03",
+  "errors": [],
+  "decisions": 0,
+  "trades": 0,
+  "settled": 0,
+  "skipped": {},
+  "model": {
+   "trained_days": 73,
+   "first_day": "2026-09-10",
+   "last_day": "2026-11-25",
+   "reference_max_diff": 0.0
+  },
+  "pending": 0,
+  "price_feed_age_s": 0.1,
+  "order_book_age_s": 0.0
+ }
+}
