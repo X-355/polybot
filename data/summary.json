@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 13:12:39",
+ "updated_utc": "2026-11-27 13:42:42",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -18,8 +18,10 @@
  "recent": [],
  "status": {
   "started_utc": "2026-11-27 12:10:03",
-  "errors": [],
-  "decisions": 24,
+  "errors": [
+   "2026-11-27 13:21:04 order book connection: ConnectionClosedError(None, None, None)"
+  ],
+  "decisions": 36,
   "trades": 0,
   "settled": 0,
   "skipped": {},
@@ -30,7 +32,7 @@
    "reference_max_diff": 0.0
   },
   "pending": 0,
-  "price_feed_age_s": 0.3,
-  "order_book_age_s": 0.0
+  "price_feed_age_s": 1.0,
+  "order_book_age_s": 0.4
  }
 }
