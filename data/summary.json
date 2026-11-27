@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 16:22:34",
+ "updated_utc": "2026-11-27 16:52:36",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -19,9 +19,9 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 16,
+   "total": 28,
    "trade": 0,
-   "no_trade": 16,
+   "no_trade": 28,
    "skipped": 0,
    "skipped_reasons": {}
   }
@@ -196,8 +196,10 @@
  ],
  "status": {
   "started_utc": "2026-11-27 16:20:03",
-  "errors": [],
-  "decisions": 0,
+  "errors": [
+   "2026-11-27 16:45:46 order book connection: ConnectionClosedError(Close(code=1013, reason='slow consumer: send buffer full'), Close(code=1013, reason='slow consumer: send buffer full'), True)"
+  ],
+  "decisions": 12,
   "trades": 0,
   "settled": 0,
   "skipped": {},
@@ -210,17 +212,17 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.099,
-   "p95": 0.106,
-   "max": 0.146,
+   "p50": 0.251,
+   "p95": 0.452,
+   "max": 0.482,
    "n": 3000
   },
   "load_avg": [
-   0.04,
-   0.03,
-   0.03
+   0.01,
+   0.02,
+   0.0
   ],
-  "price_feed_age_s": 0.7,
+  "price_feed_age_s": 0.2,
   "order_book_age_s": 0.0
  }
 }
