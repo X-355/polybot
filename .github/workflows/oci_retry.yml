@@ -12,7 +12,7 @@ concurrency: oci-retry
 jobs:
   retry:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 70
     env:
       STACK: ${{ secrets.OCI_STACK_OCID }}
       OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING: "True"
@@ -52,18 +52,40 @@ jobs:
         run: |
           echo "Server exists. Disabling the hourly retry."
           gh workflow disable oci_retry.yml -R ${{ github.repository }}
-      - name: Apply the stack
+      - name: Apply the stack (keeps trying for about 50 minutes)
+        id: apply
         if: steps.check.outputs.have == '0'
         run: |
-          busy=$(oci resource-manager job list --stack-id "$STACK" --all --query "length(data[?\"lifecycle-state\"=='IN_PROGRESS' || \"lifecycle-state\"=='ACCEPTED'])" --raw-output)
-          if [ "${busy:-0}" != "0" ]; then echo "A job is already running; skipping this hour."; exit 0; fi
-          job=$(oci resource-manager job create-apply-job --stack-id "$STACK" --execution-plan-strategy AUTO_APPROVED --display-name "auto-retry-$(date -u +%m%d-%H%M)" --query 'data.id' --raw-output)
-          echo "started apply job $job"
-          for i in $(seq 1 60); do
-            s=$(oci resource-manager job get --job-id "$job" --query 'data."lifecycle-state"' --raw-output)
-            case "$s" in SUCCEEDED|FAILED|CANCELED) break;; esac
-            sleep 15
+          end=$(( $(date +%s) + 50*60 ))
+          try=0
+          while [ $(date +%s) -lt $end ]; do
+            try=$((try+1))
+            have=0
+            for st in RUNNING STARTING PROVISIONING; do
+              c=$(oci compute instance list --compartment-id "$TENANCY" --display-name polybot --lifecycle-state $st --query 'length(data)' --raw-output 2>/dev/null || echo 0)
+              have=$((have + ${c:-0}))
+            done
+            if [ "$have" != "0" ]; then echo "SERVER CREATED"; echo "made=1" >> $GITHUB_OUTPUT; exit 0; fi
+            busy=$(oci resource-manager job list --stack-id "$STACK" --all --query "length(data[?\"lifecycle-state\"=='IN_PROGRESS' || \"lifecycle-state\"=='ACCEPTED'])" --raw-output)
+            if [ "${busy:-0}" = "0" ]; then
+              job=$(oci resource-manager job create-apply-job --stack-id "$STACK" --execution-plan-strategy AUTO_APPROVED --display-name "auto-retry-$(date -u +%m%d-%H%M)" --query 'data.id' --raw-output)
+              for i in $(seq 1 60); do
+                s=$(oci resource-manager job get --job-id "$job" --query 'data."lifecycle-state"' --raw-output)
+                case "$s" in SUCCEEDED|FAILED|CANCELED) break;; esac
+                sleep 15
+              done
+              why=$(oci resource-manager job get-job-logs --job-id "$job" --all --query 'data[].message' --raw-output 2>/dev/null | grep -oiE 'Out of host capacity|LimitExceeded[^"]*|NotAuthorized[^"]*|InternalError[^"]*' | head -1)
+              echo "$(date -u +%H:%M) try $try: $s ${why}"
+              if [ "$s" = "SUCCEEDED" ]; then echo "SERVER CREATED"; echo "made=1" >> $GITHUB_OUTPUT; exit 0; fi
+            fi
+            sleep 120
           done
-          echo "job result: $s"
-          oci resource-manager job get-job-logs --job-id "$job" --all --query 'data[].message' --raw-output 2>/dev/null | grep -iE 'error|capacity|limit|quota|500-|400-|404-' | head -8 || true
-          if [ "$s" = "SUCCEEDED" ]; then echo "SERVER CREATED"; fi
+          echo "made=0" >> $GITHUB_OUTPUT
+      - name: Keep going - start the next round
+        # GitHub's hourly schedule is unreliable for new repos, so each round starts the next one.
+        # Stops by itself once the server exists, and gives up after 4 December 2026.
+        if: steps.check.outputs.have == '0' && steps.apply.outputs.made != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(date -u +%Y%m%d)" -le 20261204 ]; then gh workflow run oci_retry.yml -R ${{ github.repository }} --ref main; echo "next round started"; else echo "deadline passed; stopping"; fi
