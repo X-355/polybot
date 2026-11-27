@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 15:32:34",
+ "updated_utc": "2026-11-27 15:42:34",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -7,41 +7,22 @@
   "rule": "Pre-registered (27 Nov 2026): no verdict before 300 settled trades. Trades are scored at the worse of the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same windows. Interval below zero = no edge. Still unclear at 1000 trades = not proven, test ends.",
   "verdict": {
    "state": "collecting",
-   "text": "Collecting: 6 of 300 trades needed before any verdict.",
-   "stats": {
-    "mean": 1.5534,
-    "lo": -0.4283,
-    "hi": 3.5351,
-    "n": 6,
-    "windows": 5
-   }
+   "text": "Collecting: 0 of 300 trades needed before any verdict.",
+   "stats": null
   },
-  "conservative": {
-   "mean": 1.5534,
-   "lo": -0.4283,
-   "hi": 3.5351,
-   "n": 6,
-   "windows": 5
-  },
+  "conservative": null,
   "controls": {
-   "favourite": {
-    "mean": -0.0995,
-    "lo": -0.8837,
-    "hi": 0.6847,
-    "n": 6,
-    "windows": 5
-   },
-   "coin_flip": {
-    "mean": 0.2657,
-    "lo": -0.7302,
-    "hi": 1.2617,
-    "n": 6,
-    "windows": 5
-   }
+   "favourite": null,
+   "coin_flip": null
   },
-  "stake_fits_at_best_ask_pct": 50.0
+  "stake_fits_at_best_ask_pct": null,
+  "excluded_trades": 6,
+  "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s"
  },
  "overall": {
+  "trades": 0
+ },
+ "overall_including_excluded": {
   "trades": 6,
   "wins": 6,
   "win_rate": 1.0,
@@ -53,181 +34,20 @@
  },
  "by_left": {
   "30": {
-   "trades": 2,
-   "wins": 2,
-   "win_rate": 1.0,
-   "avg_price": 0.565,
-   "staked_usd": 20.0,
-   "pnl_usd": 40.32,
-   "return_pct": 201.59,
-   "return_1s_pct": 200.51
+   "trades": 0
   },
   "10": {
-   "trades": 4,
-   "wins": 4,
-   "win_rate": 1.0,
-   "avg_price": 0.59,
-   "staked_usd": 40.0,
-   "pnl_usd": 53.1,
-   "return_pct": 132.76,
-   "return_1s_pct": 136.82
+   "trades": 0
   }
  },
- "first_trade_utc": "2026-11-27 14:04:30",
- "recent": [
-  {
-   "decided_utc": "2026-11-27 15:24:50",
-   "window_start": "1795792800",
-   "left": "10",
-   "side": "Up",
-   "p_model": "0.9033",
-   "p_formula": "1.0",
-   "edge": "0.6953",
-   "price": "0.2",
-   "ask_size": "744.0",
-   "price_1s": "0.2",
-   "up_bid": "0.19",
-   "up_ask": "0.2",
-   "dn_bid": "0.8",
-   "dn_ask": "0.81",
-   "price_to_beat": "59608.39871568885",
-   "btc_price": "59726.92177072555",
-   "result": "Up",
-   "win": "1",
-   "shares": "50.0",
-   "fee_usd": "0.4",
-   "pnl_usd": "39.6",
-   "pnl_1s_usd": "39.6"
-  },
-  {
-   "decided_utc": "2026-11-27 15:24:30",
-   "window_start": "1795792800",
-   "left": "30",
-   "side": "Up",
-   "p_model": "0.6343",
-   "p_formula": "1.0",
-   "edge": "0.4263",
-   "price": "0.2",
-   "ask_size": "754.0",
-   "price_1s": "0.2",
-   "up_bid": "0.19",
-   "up_ask": "0.2",
-   "dn_bid": "0.8",
-   "dn_ask": "0.81",
-   "price_to_beat": "59608.39871568885",
-   "btc_price": "59718.13126084173",
-   "result": "Up",
-   "win": "1",
-   "shares": "50.0",
-   "fee_usd": "0.4",
-   "pnl_usd": "39.6",
-   "pnl_1s_usd": "39.6"
-  },
-  {
-   "decided_utc": "2026-11-27 15:14:50",
-   "window_start": "1795792200",
-   "left": "10",
-   "side": "Up",
-   "p_model": "0.9916",
-   "p_formula": "1.0",
-   "edge": "0.4691",
-   "price": "0.51",
-   "ask_size": "16.75",
-   "price_1s": "0.51",
-   "up_bid": "0.49",
-   "up_ask": "0.51",
-   "dn_bid": "0.49",
-   "dn_ask": "0.51",
-   "price_to_beat": "59088.927123355585",
-   "btc_price": "59642.732209345",
-   "result": "Up",
-   "win": "1",
-   "shares": "19.6078",
-   "fee_usd": "0.245",
-   "pnl_usd": "9.3628",
-   "pnl_1s_usd": "9.3628"
-  },
-  {
-   "decided_utc": "2026-11-27 15:09:50",
-   "window_start": "1795791900",
-   "left": "10",
-   "side": "Up",
-   "p_model": "0.9895",
-   "p_formula": "1.0",
-   "edge": "0.1138",
-   "price": "0.87",
-   "ask_size": "10.0",
-   "price_1s": "0.87",
-   "up_bid": "0.51",
-   "up_ask": "0.87",
-   "dn_bid": "0.13",
-   "dn_ask": "0.49",
-   "price_to_beat": "59005.826513098415",
-   "btc_price": "59119.38146887845",
-   "result": "Up",
-   "win": "1",
-   "shares": "11.4943",
-   "fee_usd": "0.065",
-   "pnl_usd": "1.4293",
-   "pnl_1s_usd": "1.4293"
-  },
-  {
-   "decided_utc": "2026-11-27 14:24:50",
-   "window_start": "1795789200",
-   "left": "10",
-   "side": "Up",
-   "p_model": "0.8436",
-   "p_formula": "0.9281",
-   "edge": "0.055",
-   "price": "0.78",
-   "ask_size": "12.0",
-   "price_1s": "0.69",
-   "up_bid": "0.77",
-   "up_ask": "0.78",
-   "dn_bid": "0.22",
-   "dn_ask": "0.23",
-   "price_to_beat": "61337.03774457164",
-   "btc_price": "61348.39745295516",
-   "result": "Up",
-   "win": "1",
-   "shares": "12.8205",
-   "fee_usd": "0.11",
-   "pnl_usd": "2.7105",
-   "pnl_1s_usd": "4.3378"
-  },
-  {
-   "decided_utc": "2026-11-27 14:04:30",
-   "window_start": "1795788000",
-   "left": "30",
-   "side": "Down",
-   "p_model": "0.035",
-   "p_formula": "0.1029",
-   "edge": "0.0318",
-   "price": "0.93",
-   "ask_size": "15.69",
-   "price_1s": "0.95",
-   "up_bid": "0.07",
-   "up_ask": "0.08",
-   "dn_bid": "0.92",
-   "dn_ask": "0.93",
-   "price_to_beat": "61417.53672870741",
-   "btc_price": "61418.728076885774",
-   "result": "Down",
-   "win": "1",
-   "shares": "10.7527",
-   "fee_usd": "0.035",
-   "pnl_usd": "0.7177",
-   "pnl_1s_usd": "0.5013"
-  }
- ],
+ "first_trade_utc": null,
+ "recent": [],
  "status": {
-  "started_utc": "2026-11-27 15:30:03",
-  "errors": [
-   "2026-11-27 15:30:48 order book connection: ConnectionClosedError(Close(code=1013, reason='slow consumer: send buffer full'), Close(code=1013, reason='slow consumer: send buffer full'), True)"
-  ],
+  "started_utc": "2026-11-27 15:40:03",
+  "errors": [],
   "decisions": 0,
   "trades": 0,
-  "settled": 2,
+  "settled": 0,
   "skipped": {},
   "model": {
    "trained_days": 73,
@@ -237,7 +57,18 @@
   },
   "pending": 0,
   "awaiting_results": 0,
-  "price_feed_age_s": 0.9,
+  "book_delay_s": {
+   "p50": 0.101,
+   "p95": 0.268,
+   "max": 0.372,
+   "n": 3000
+  },
+  "load_avg": [
+   0.06,
+   0.07,
+   0.08
+  ],
+  "price_feed_age_s": 0.6,
   "order_book_age_s": 0.0
  }
 }
