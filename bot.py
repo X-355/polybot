@@ -216,7 +216,15 @@ async def rtds_loop():
                 await ws.send(json.dumps(sub))
                 pinger = asyncio.create_task(text_ping(ws, 5))
                 try:
-                    async for msg in ws:
+                    while True:
+                        try:                                  # a silent feed is reconnected after 15 s
+                            msg = await asyncio.wait_for(ws.recv(), timeout=15)
+                        except asyncio.TimeoutError:
+                            S.err("price feed silent for 15 s; reconnecting")
+                            break
+                        if S.cl_recv and time.time() - S.cl_recv > 15:
+                            S.err("no Chainlink price for 15 s; reconnecting")
+                            break
                         if not msg or msg[0] != "{":
                             continue
                         m = orjson.loads(msg)
