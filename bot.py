@@ -85,9 +85,13 @@ MODEL = None
 
 # ---------------------------------------------------------------- Polymarket market data
 def gamma_market(start):
-    r = HTTP.get(GAMMA, params={"slug": f"btc-updown-5m-{start}"}, timeout=15)
-    r.raise_for_status()
-    js = r.json()
+    js = []
+    for extra in ({}, {"closed": "true"}):        # finished markets are only listed with closed=true
+        r = HTTP.get(GAMMA, params={"slug": f"btc-updown-5m-{start}", **extra}, timeout=15)
+        r.raise_for_status()
+        js = r.json()
+        if js:
+            break
     if not js:
         return None
     m = js[0]
