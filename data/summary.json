@@ -1,17 +1,17 @@
 {
- "updated_utc": "2026-11-27 14:52:35",
+ "updated_utc": "2026-11-27 15:22:37",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
  "overall": {
-  "trades": 2,
-  "wins": 2,
+  "trades": 4,
+  "wins": 4,
   "win_rate": 1.0,
-  "avg_price": 0.855,
-  "staked_usd": 20.0,
-  "pnl_usd": 3.43,
-  "return_pct": 17.14,
-  "return_1s_pct": 24.2
+  "avg_price": 0.7725,
+  "staked_usd": 40.0,
+  "pnl_usd": 14.22,
+  "return_pct": 35.55,
+  "return_1s_pct": 39.08
  },
  "by_left": {
   "30": {
@@ -25,18 +25,66 @@
    "return_1s_pct": 5.01
   },
   "10": {
-   "trades": 1,
-   "wins": 1,
+   "trades": 3,
+   "wins": 3,
    "win_rate": 1.0,
-   "avg_price": 0.78,
-   "staked_usd": 10.0,
-   "pnl_usd": 2.71,
-   "return_pct": 27.11,
-   "return_1s_pct": 43.38
+   "avg_price": 0.72,
+   "staked_usd": 30.0,
+   "pnl_usd": 13.5,
+   "return_pct": 45.01,
+   "return_1s_pct": 50.43
   }
  },
  "first_trade_utc": "2026-11-27 14:04:30",
  "recent": [
+  {
+   "decided_utc": "2026-11-27 15:14:50",
+   "window_start": "1795792200",
+   "left": "10",
+   "side": "Up",
+   "p_model": "0.9916",
+   "p_formula": "1.0",
+   "edge": "0.4691",
+   "price": "0.51",
+   "ask_size": "16.75",
+   "price_1s": "0.51",
+   "up_bid": "0.49",
+   "up_ask": "0.51",
+   "dn_bid": "0.49",
+   "dn_ask": "0.51",
+   "price_to_beat": "59088.927123355585",
+   "btc_price": "59642.732209345",
+   "result": "Up",
+   "win": "1",
+   "shares": "19.6078",
+   "fee_usd": "0.245",
+   "pnl_usd": "9.3628",
+   "pnl_1s_usd": "9.3628"
+  },
+  {
+   "decided_utc": "2026-11-27 15:09:50",
+   "window_start": "1795791900",
+   "left": "10",
+   "side": "Up",
+   "p_model": "0.9895",
+   "p_formula": "1.0",
+   "edge": "0.1138",
+   "price": "0.87",
+   "ask_size": "10.0",
+   "price_1s": "0.87",
+   "up_bid": "0.51",
+   "up_ask": "0.87",
+   "dn_bid": "0.13",
+   "dn_ask": "0.49",
+   "price_to_beat": "59005.826513098415",
+   "btc_price": "59119.38146887845",
+   "result": "Up",
+   "win": "1",
+   "shares": "11.4943",
+   "fee_usd": "0.065",
+   "pnl_usd": "1.4293",
+   "pnl_1s_usd": "1.4293"
+  },
   {
    "decided_utc": "2026-11-27 14:24:50",
    "window_start": "1795789200",
@@ -89,10 +137,12 @@
  "status": {
   "started_utc": "2026-11-27 14:50:03",
   "errors": [],
-  "decisions": 0,
-  "trades": 0,
-  "settled": 2,
-  "skipped": {},
+  "decisions": 11,
+  "trades": 2,
+  "settled": 4,
+  "skipped": {
+   "no fresh order book": 1
+  },
   "model": {
    "trained_days": 73,
    "first_day": "2026-09-10",
@@ -100,7 +150,7 @@
    "reference_max_diff": 0.0
   },
   "pending": 0,
-  "price_feed_age_s": 0.8,
-  "order_book_age_s": 0.4
+  "price_feed_age_s": 0.7,
+  "order_book_age_s": 127.8
  }
 }
