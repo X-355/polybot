@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 16:52:36",
+ "updated_utc": "2026-11-27 17:22:39",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -7,41 +7,79 @@
   "rule": "Pre-registered (27 Nov 2026): no verdict before 300 settled trades. Trades are scored at the worse of the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same windows. Interval below zero = no edge. Still unclear at 1000 trades = not proven, test ends.",
   "verdict": {
    "state": "collecting",
-   "text": "Collecting: 0 of 300 trades needed before any verdict.",
-   "stats": null
+   "text": "Collecting: 1 of 300 trades needed before any verdict.",
+   "stats": {
+    "mean": -1.0465,
+    "lo": null,
+    "hi": null,
+    "n": 1,
+    "windows": 1
+   }
   },
-  "conservative": null,
+  "conservative": {
+   "mean": -1.0465,
+   "lo": null,
+   "hi": null,
+   "n": 1,
+   "windows": 1
+  },
   "controls": {
-   "favourite": null,
-   "coin_flip": null
+   "favourite": {
+    "mean": 0.0608,
+    "lo": null,
+    "hi": null,
+    "n": 1,
+    "windows": 1
+   },
+   "coin_flip": {
+    "mean": -0.4928,
+    "lo": null,
+    "hi": null,
+    "n": 1,
+    "windows": 1
+   }
   },
-  "stake_fits_at_best_ask_pct": null,
+  "stake_fits_at_best_ask_pct": 100.0,
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 28,
-   "trade": 0,
-   "no_trade": 28,
+   "total": 40,
+   "trade": 1,
+   "no_trade": 39,
    "skipped": 0,
    "skipped_reasons": {}
   }
  },
  "overall": {
-  "trades": 0
+  "trades": 1,
+  "wins": 0,
+  "win_rate": 0.0,
+  "avg_price": 0.07,
+  "staked_usd": 10.0,
+  "pnl_usd": -10.46,
+  "return_pct": -104.65,
+  "return_1s_pct": -104.75
  },
  "overall_including_excluded": {
-  "trades": 6,
+  "trades": 7,
   "wins": 6,
-  "win_rate": 1.0,
-  "avg_price": 0.5817,
-  "staked_usd": 60.0,
-  "pnl_usd": 93.42,
-  "return_pct": 155.7,
-  "return_1s_pct": 158.05
+  "win_rate": 0.8571,
+  "avg_price": 0.5086,
+  "staked_usd": 70.0,
+  "pnl_usd": 82.96,
+  "return_pct": 118.51,
+  "return_1s_pct": 120.51
  },
  "by_left": {
   "30": {
-   "trades": 0
+   "trades": 1,
+   "wins": 0,
+   "win_rate": 0.0,
+   "avg_price": 0.07,
+   "staked_usd": 10.0,
+   "pnl_usd": -10.46,
+   "return_pct": -104.65,
+   "return_1s_pct": -104.75
   },
   "10": {
    "trades": 0
@@ -49,6 +87,31 @@
  },
  "first_trade_utc": "2026-11-27 14:04:30",
  "recent": [
+  {
+   "decided_utc": "2026-11-27 17:09:30",
+   "window_start": "1795799100",
+   "left": "30",
+   "side": "Down",
+   "p_model": "0.8871",
+   "p_formula": "0.9374",
+   "edge": "0.0396",
+   "price": "0.07",
+   "ask_size": "428.0",
+   "price_1s": "0.05",
+   "up_bid": "0.93",
+   "up_ask": "0.94",
+   "dn_bid": "0.06",
+   "dn_ask": "0.07",
+   "price_to_beat": "59865.02420443264",
+   "btc_price": "59886.741692885975",
+   "result": "Up",
+   "win": "0",
+   "shares": "142.8571",
+   "fee_usd": "0.465",
+   "pnl_usd": "-10.465",
+   "pnl_1s_usd": "-10.475",
+   "lag_s": "0.116"
+  },
   {
    "decided_utc": "2026-11-27 15:24:50",
    "window_start": "1795792800",
@@ -199,9 +262,9 @@
   "errors": [
    "2026-11-27 16:45:46 order book connection: ConnectionClosedError(Close(code=1013, reason='slow consumer: send buffer full'), Close(code=1013, reason='slow consumer: send buffer full'), True)"
   ],
-  "decisions": 12,
-  "trades": 0,
-  "settled": 0,
+  "decisions": 24,
+  "trades": 1,
+  "settled": 1,
   "skipped": {},
   "model": {
    "trained_days": 73,
@@ -212,17 +275,17 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.251,
-   "p95": 0.452,
-   "max": 0.482,
+   "p50": 0.095,
+   "p95": 0.113,
+   "max": 0.134,
    "n": 3000
   },
   "load_avg": [
-   0.01,
    0.02,
-   0.0
+   0.07,
+   0.02
   ],
-  "price_feed_age_s": 0.2,
+  "price_feed_age_s": 0.0,
   "order_book_age_s": 0.0
  }
 }
