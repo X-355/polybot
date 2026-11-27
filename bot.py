@@ -438,9 +438,10 @@ def lag_stats():
 
 def summarize():
     rows = []
-    path = os.path.join(DATA, "trades.csv")
-    if os.path.exists(path):
-        rows = list(csv.DictReader(open(path)))
+    for name in ("trades_v1.csv", "trades.csv"):           # older-format log first, then the current one
+        path = os.path.join(DATA, name)
+        if os.path.exists(path):
+            rows += list(csv.DictReader(open(path)))
     def block(rs):
         if not rs:
             return dict(trades=0)
@@ -463,7 +464,7 @@ def summarize():
                 excluded_reason="trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s")
     out = dict(updated_utc=utc(), stake_per_trade_usd=STAKE, fee_coef=F.FEE_COEF, edge=F.EDGE, test=test,
                overall=block(rows), overall_including_excluded=block(all_rows), by_left={str(l): block([r for r in rows if int(r["left"]) == l]) for l in F.LEFTS},
-               first_trade_utc=rows[0]["decided_utc"] if rows else None, recent=rows[-50:][::-1],
+               first_trade_utc=all_rows[0]["decided_utc"] if all_rows else None, recent=all_rows[-50:][::-1],
                status=dict(S.status, pending=len(S.pending), awaiting_results=len(S.need),
                            book_delay_s=lag_stats(), load_avg=[round(v, 2) for v in os.getloadavg()],
                            price_feed_age_s=round(time.time() - S.cl_recv, 1) if S.cl_recv else None,
