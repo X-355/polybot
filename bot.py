@@ -46,6 +46,9 @@ class State:
         self.book_recv = 0.0
         self.lag = None                      # seconds between Polymarket's timestamp and our processing, latest message
         self.lags = collections.deque(maxlen=3000)
+        self.cl_gaps = collections.deque(maxlen=600)       # seconds between Chainlink updates arriving
+        self.cl_obs_lag = collections.deque(maxlen=600)    # arrival time minus the price's own timestamp
+        self.rtds_msgs = collections.Counter()
         self.cur = None                      # current market dict
         self.done = set()                    # (start, left) already decided
         self.pending = self._load("pending.json", [])
@@ -218,6 +221,7 @@ async def rtds_loop():
                             continue
                         m = orjson.loads(msg)
                         topic, pl = m.get("topic"), m.get("payload") or {}
+                        S.rtds_msgs[(topic or "none") + ("/list" if isinstance(pl.get("data"), list) else "")] += 1
                         tgt = S.cl if topic == "crypto_prices_chainlink" else S.tw if topic == "crypto_prices_twap_sixty" else None
                         if tgt is None:
                             continue
@@ -230,8 +234,12 @@ async def rtds_loop():
                             s = int(it["timestamp"]) // 1000
                             tgt[s] = float(it["value"])
                             if tgt is S.cl:
+                                now_ = time.time()
+                                if S.cl_recv:
+                                    S.cl_gaps.append(now_ - S.cl_recv)
+                                S.cl_obs_lag.append(now_ - int(it["timestamp"]) / 1000)
                                 S.cl_known = s if S.cl_known is None else max(S.cl_known, s)
-                                S.cl_recv = time.time()
+                                S.cl_recv = now_
                         if len(S.cl) > 1200:
                             cut = max(S.cl) - 900
                             for d in (S.cl, S.tw):
@@ -429,8 +437,8 @@ def verdict(rows):
 
 
 
-def lag_stats():
-    xs = sorted(S.lags)
+def lag_stats(src=None):
+    xs = sorted(S.lags if src is None else src)
     if not xs:
         return None
     q = lambda f: round(xs[min(len(xs) - 1, int(f * len(xs)))], 3)
@@ -477,7 +485,9 @@ def summarize():
                overall=block(rows), overall_including_excluded=block(all_rows), by_left={str(l): block([r for r in rows if int(r["left"]) == l]) for l in F.LEFTS},
                first_trade_utc=all_rows[0]["decided_utc"] if all_rows else None, recent=all_rows[-50:][::-1],
                status=dict(S.status, pending=len(S.pending), awaiting_results=len(S.need),
-                           book_delay_s=lag_stats(), load_avg=[round(v, 2) for v in os.getloadavg()],
+                           book_delay_s=lag_stats(), price_feed_gap_s=lag_stats(S.cl_gaps),
+                           price_feed_obs_lag_s=lag_stats(S.cl_obs_lag), price_feed_msgs=dict(S.rtds_msgs),
+                           price_feed_last_obs_age_s=round(time.time() - S.cl_known, 1) if S.cl_known else None, load_avg=[round(v, 2) for v in os.getloadavg()],
                            price_feed_age_s=round(time.time() - S.cl_recv, 1) if S.cl_recv else None,
                            order_book_age_s=round(time.time() - S.book_recv, 1) if S.book_recv else None))
     return out
