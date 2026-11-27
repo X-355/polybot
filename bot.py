@@ -6,7 +6,7 @@ price feed, and 30 s and 10 s before each window ends it asks the gradient-tree 
 If so it logs a pretend $10 buy at the best ask it saw, then scores it against Polymarket's official
 result. The point is to find out whether the backtest's "last 30 seconds" lead survives live.
 """
-import asyncio, csv, json, logging, math, os, subprocess, time
+import asyncio, collections, csv, json, logging, math, os, subprocess, time
 from datetime import datetime, timezone
 
 import joblib, numpy as np, orjson, requests, websockets
@@ -28,9 +28,10 @@ HTTP.headers["User-Agent"] = "polybot-paper-research/1.0"
 
 TRADE_COLS = ["decided_utc", "window_start", "left", "side", "p_model", "p_formula", "edge", "price", "ask_size",
               "price_1s", "up_bid", "up_ask", "dn_bid", "dn_ask", "price_to_beat", "btc_price", "result", "win",
-              "shares", "fee_usd", "pnl_usd", "pnl_1s_usd"]
+              "shares", "fee_usd", "pnl_usd", "pnl_1s_usd", "lag_s"]
 DEC_COLS = ["decided_utc", "window_start", "left", "status", "p_model", "p_formula", "edge", "side",
-            "up_bid", "up_ask", "up_ask_sz", "dn_bid", "dn_ask", "dn_ask_sz", "price_to_beat", "btc_price"]
+            "up_bid", "up_ask", "up_ask_sz", "dn_bid", "dn_ask", "dn_ask_sz", "price_to_beat", "btc_price", "lag_s"]
+MAX_LAG = 2.0             # refuse to trade if our view of the order book is more than 2 s behind Polymarket
 
 
 def utc(ts=None):
@@ -43,6 +44,8 @@ class State:
         self.cl_known, self.cl_recv = None, 0.0
         self.books, self.fresh = {}, set()
         self.book_recv = 0.0
+        self.lag = None                      # seconds between Polymarket's timestamp and our processing, latest message
+        self.lags = collections.deque(maxlen=3000)
         self.cur = None                      # current market dict
         self.done = set()                    # (start, left) already decided
         self.pending = self._load("pending.json", [])
@@ -121,6 +124,13 @@ def top(asset):
 
 def on_book_msg(x):
     et, now = x.get("event_type"), time.time()
+    ts = x.get("timestamp")
+    if ts:
+        try:
+            S.lag = now - int(ts) / 1000
+            S.lags.append(S.lag)
+        except (TypeError, ValueError):
+            pass
     if et == "book":
         a = x["asset_id"]
         S.books[a] = dict(bids={round(float(l["price"]), 4): float(l["size"]) for l in x.get("bids", []) if float(l["size"]) > 0},
@@ -237,6 +247,11 @@ async def rtds_loop():
 # ---------------------------------------------------------------- decisions
 def append_csv(name, cols, row):
     path = os.path.join(DATA, name)
+    if os.path.exists(path):
+        with open(path) as fh:
+            head = fh.readline().strip().split(",")
+        if head != cols:                     # columns changed: keep the old file, start a new one
+            os.rename(path, path.replace(".csv", "_v1.csv"))
     new = not os.path.exists(path)
     with open(path, "a", newline="") as fh:
         w = csv.writer(fh)
@@ -259,6 +274,8 @@ async def decide(m, left):
         return skip(start, left, "no fresh order book")
     if now - S.cl_recv > 10 or S.cl_known is None:
         return skip(start, left, "price feed stale")
+    if S.lag is None or S.lag > MAX_LAG or now - S.book_recv > 5:
+        return skip(start, left, "order book lagging")
     ptb = m.get("ptb")
     if ptb is None:
         ptb = next((S.tw[s] for s in (start, start - 1, start + 1) if s in S.tw), None)
@@ -278,7 +295,7 @@ async def decide(m, left):
     row = dict(decided_utc=utc(now), window_start=start, left=left, status="trade" if side else "no trade",
                p_model=round(p, 4), p_formula=round(pf, 4), edge=round(edge, 4), side=side,
                up_bid=up["bid"], up_ask=up["ask"], up_ask_sz=up["ask_sz"], dn_bid=dn["bid"], dn_ask=dn["ask"],
-               dn_ask_sz=dn["ask_sz"], price_to_beat=ptb, btc_price=S.cl[S.cl_known])
+               dn_ask_sz=dn["ask_sz"], price_to_beat=ptb, btc_price=S.cl[S.cl_known], lag_s=round(S.lag, 3))
     append_csv("decisions.csv", DEC_COLS, row)
     if not side:
         return
@@ -411,6 +428,14 @@ def verdict(rows):
     return dict(state="undecided", text=f"Undecided after {n} trades: still within noise, keep collecting (up to {MAX_TRADES}).", stats=c)
 
 
+
+def lag_stats():
+    xs = sorted(S.lags)
+    if not xs:
+        return None
+    q = lambda f: round(xs[min(len(xs) - 1, int(f * len(xs)))], 3)
+    return dict(p50=q(0.5), p95=q(0.95), max=round(xs[-1], 3), n=len(xs))
+
 def summarize():
     rows = []
     path = os.path.join(DATA, "trades.csv")
@@ -425,17 +450,22 @@ def summarize():
                     avg_price=round(sum(float(r["price"]) for r in rs) / len(rs), 4), staked_usd=stake,
                     pnl_usd=round(pnl, 2), return_pct=round(pnl / stake * 100, 2),
                     return_1s_pct=round(sum(float(r["pnl_1s_usd"]) for r in r1) / (STAKE * len(r1)) * 100, 2) if r1 else None)
+    all_rows = rows
+    rows = [r for r in rows if r.get("lag_s") not in (None, "") and float(r["lag_s"]) <= MAX_LAG]
     fits = [r for r in rows if float(r["ask_size"] or 0) * float(r["price"]) >= STAKE]
     test = dict(rule=(f"Pre-registered (27 Nov 2026): no verdict before {MIN_TRADES} settled trades. Trades are scored at the worse of "
                       "the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval "
                       "of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same "
                       f"windows. Interval below zero = no edge. Still unclear at {MAX_TRADES} trades = not proven, test ends."),
                 verdict=verdict(rows), conservative=cluster_ci(rows, conservative), controls=controls(rows),
-                stake_fits_at_best_ask_pct=round(100 * len(fits) / len(rows), 1) if rows else None)
+                stake_fits_at_best_ask_pct=round(100 * len(fits) / len(rows), 1) if rows else None,
+                excluded_trades=len(all_rows) - len(rows),
+                excluded_reason="trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s")
     out = dict(updated_utc=utc(), stake_per_trade_usd=STAKE, fee_coef=F.FEE_COEF, edge=F.EDGE, test=test,
-               overall=block(rows), by_left={str(l): block([r for r in rows if int(r["left"]) == l]) for l in F.LEFTS},
+               overall=block(rows), overall_including_excluded=block(all_rows), by_left={str(l): block([r for r in rows if int(r["left"]) == l]) for l in F.LEFTS},
                first_trade_utc=rows[0]["decided_utc"] if rows else None, recent=rows[-50:][::-1],
                status=dict(S.status, pending=len(S.pending), awaiting_results=len(S.need),
+                           book_delay_s=lag_stats(), load_avg=[round(v, 2) for v in os.getloadavg()],
                            price_feed_age_s=round(time.time() - S.cl_recv, 1) if S.cl_recv else None,
                            order_book_age_s=round(time.time() - S.book_recv, 1) if S.book_recv else None))
     return out
@@ -445,7 +475,7 @@ def publish(push=True):
     out = summarize()
     os.makedirs(os.path.join(REPO, "data"), exist_ok=True)
     json.dump(out, open(os.path.join(REPO, "data", "summary.json"), "w"), indent=1)
-    for name in ("trades.csv", "decisions.csv"):
+    for name in sorted(f for f in os.listdir(DATA) if f.endswith(".csv")):
         src = os.path.join(DATA, name)
         if os.path.exists(src):
             with open(src) as a, open(os.path.join(REPO, "data", name), "w") as b:

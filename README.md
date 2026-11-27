@@ -29,6 +29,9 @@ So the result can be trusted whichever way it goes, the rules were fixed before 
 - **Edge confirmed** only if the 95% interval of return per $1 (the two checks in one window treated as related)
   is above zero **and** the bot beats simply buying the favourite in the same windows at the same moments.
 - **No edge** if the interval is below zero. **Not proven** if still unclear at 1,000 trades; the test then ends.
+- **Fresh prices only:** the bot measures how far its view of the order book is behind Polymarket's own timestamps and
+  refuses to trade if it is more than 2 seconds behind. The first 6 trades (27 Nov, before this check existed) are
+  excluded from the test, because a slow server can show prices that no longer exist and produce fake wins.
 - A watchdog opens a GitHub issue (and emails the owner) if the bot stops reporting for 2 hours.
 
 The running verdict is in `data/summary.json` under `test`.
