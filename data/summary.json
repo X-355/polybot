@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-27 18:52:34",
+ "updated_utc": "2026-11-27 19:22:37",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -43,9 +43,9 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 76,
+   "total": 88,
    "trade": 1,
-   "no_trade": 57,
+   "no_trade": 69,
    "skipped": 18,
    "skipped_reasons": {
     "price feed stale": 18
@@ -262,7 +262,7 @@
  "status": {
   "started_utc": "2026-11-27 18:50:03",
   "errors": [],
-  "decisions": 0,
+  "decisions": 12,
   "trades": 0,
   "settled": 0,
   "skipped": {},
@@ -275,36 +275,36 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.099,
-   "p95": 0.13,
-   "max": 0.403,
+   "p50": 0.297,
+   "p95": 0.832,
+   "max": 0.885,
    "n": 3000
   },
   "price_feed_gap_s": {
-   "p50": 1.13,
-   "p95": 1.58,
-   "max": 8.327,
-   "n": 139
+   "p50": 1.088,
+   "p95": 1.494,
+   "max": 7.5,
+   "n": 600
   },
   "price_feed_obs_lag_s": {
-   "p50": 1.461,
-   "p95": 1.857,
-   "max": 2.171,
-   "n": 140
+   "p50": 1.465,
+   "p95": 1.967,
+   "max": 2.404,
+   "n": 600
   },
   "price_feed_msgs": {
    "crypto_prices/list": 1,
    "crypto_prices_twap_sixty/list": 1,
-   "crypto_prices_chainlink": 140,
-   "crypto_prices_twap_sixty": 140
+   "crypto_prices_chainlink": 1922,
+   "crypto_prices_twap_sixty": 1925
   },
-  "price_feed_last_obs_age_s": 2.3,
+  "price_feed_last_obs_age_s": 1.2,
   "load_avg": [
-   0.08,
-   0.06,
+   0.09,
+   0.05,
    0.01
   ],
-  "price_feed_age_s": 0.9,
+  "price_feed_age_s": 0.0,
   "order_book_age_s": 0.0
  }
 }
