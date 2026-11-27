@@ -377,12 +377,13 @@ def publish(push=True):
 
 
 async def publisher():
+    await asyncio.sleep(150)          # first report soon after start, so a (re)start is visible quickly
     while True:
-        await asyncio.sleep(PUBLISH_EVERY)
         try:
             await asyncio.to_thread(publish, True)
         except Exception as e:
             S.err(f"publish: {e!r}")
+        await asyncio.sleep(PUBLISH_EVERY)
 
 
 async def main():
