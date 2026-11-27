@@ -56,6 +56,7 @@ jobs:
         id: apply
         if: steps.check.outputs.have == '0'
         run: |
+          set +e   # one failed call must not end the round
           end=$(( $(date +%s) + 50*60 ))
           try=0
           while [ $(date +%s) -lt $end ]; do
@@ -68,7 +69,8 @@ jobs:
             if [ "$have" != "0" ]; then echo "SERVER CREATED"; echo "made=1" >> $GITHUB_OUTPUT; exit 0; fi
             busy=$(oci resource-manager job list --stack-id "$STACK" --all --query "length(data[?\"lifecycle-state\"=='IN_PROGRESS' || \"lifecycle-state\"=='ACCEPTED'])" --raw-output)
             if [ "${busy:-0}" = "0" ]; then
-              job=$(oci resource-manager job create-apply-job --stack-id "$STACK" --execution-plan-strategy AUTO_APPROVED --display-name "auto-retry-$(date -u +%m%d-%H%M)" --query 'data.id' --raw-output)
+              job=$(oci resource-manager job create-apply-job --stack-id "$STACK" --execution-plan-strategy AUTO_APPROVED --display-name "auto-retry-$(date -u +%m%d-%H%M)" --query 'data.id' --raw-output 2>/tmp/err)
+              if [ -z "$job" ]; then echo "$(date -u +%H:%M) try $try: could not start ($(grep -oE '"code": "[A-Za-z]+"' /tmp/err | head -1)); waiting"; sleep 600; continue; fi
               for i in $(seq 1 60); do
                 s=$(oci resource-manager job get --job-id "$job" --query 'data."lifecycle-state"' --raw-output)
                 case "$s" in SUCCEEDED|FAILED|CANCELED) break;; esac
@@ -78,13 +80,13 @@ jobs:
               echo "$(date -u +%H:%M) try $try: $s ${why}"
               if [ "$s" = "SUCCEEDED" ]; then echo "SERVER CREATED"; echo "made=1" >> $GITHUB_OUTPUT; exit 0; fi
             fi
-            sleep 120
+            sleep 480   # about one try every 10 minutes: Oracle rate-limits faster retries
           done
           echo "made=0" >> $GITHUB_OUTPUT
       - name: Keep going - start the next round
         # GitHub's hourly schedule is unreliable for new repos, so each round starts the next one.
         # Stops by itself once the server exists, and gives up after 4 December 2026.
-        if: steps.check.outputs.have == '0' && steps.apply.outputs.made != '1'
+        if: always() && steps.check.outputs.have == '0' && steps.apply.outputs.made != '1'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
