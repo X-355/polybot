@@ -462,6 +462,17 @@ def summarize():
                 stake_fits_at_best_ask_pct=round(100 * len(fits) / len(rows), 1) if rows else None,
                 excluded_trades=len(all_rows) - len(rows),
                 excluded_reason="trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s")
+    checks = collections.Counter()
+    try:
+        for r in csv.DictReader(open(os.path.join(DATA, "decisions.csv"))):     # since the freshness check began
+            checks["skipped" if r["status"].startswith("skipped") else r["status"]] += 1
+            if r["status"].startswith("skipped"):
+                checks[r["status"]] += 1
+    except FileNotFoundError:
+        pass
+    test["checks"] = dict(total=checks["trade"] + checks["no trade"] + checks["skipped"], trade=checks["trade"],
+                          no_trade=checks["no trade"], skipped=checks["skipped"],
+                          skipped_reasons={k[9:]: v for k, v in checks.items() if k.startswith("skipped: ")})
     out = dict(updated_utc=utc(), stake_per_trade_usd=STAKE, fee_coef=F.FEE_COEF, edge=F.EDGE, test=test,
                overall=block(rows), overall_including_excluded=block(all_rows), by_left={str(l): block([r for r in rows if int(r["left"]) == l]) for l in F.LEFTS},
                first_trade_utc=all_rows[0]["decided_utc"] if all_rows else None, recent=all_rows[-50:][::-1],
