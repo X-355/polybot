@@ -1,20 +1,26 @@
 {
- "updated_utc": "2026-11-28 04:53:23",
+ "updated_utc": "2026-11-28 05:02:35",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
  "test": {
-  "rule": "Pre-registered (27 Nov 2026): no verdict before 300 settled trades. Trades are scored at the worse of the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same windows. Interval below zero = no edge. Still unclear at 1000 trades = not proven, test ends.",
+  "rule": "Pre-registered (27 Nov 2026): no verdict before 300 settled trades. Trades are scored at the worse of the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same windows. Interval below zero = no edge. Still unclear at 1000 trades = not proven, test ends. Added 28 Nov 2026 before further results: if on 2026-12-11 the bot has made fewer than a third of the trades the backtest predicts (4.9% of checked windows), the test stops early.",
   "verdict": {
    "state": "collecting",
-   "text": "Collecting: 1 of 300 trades needed before any verdict.",
    "stats": {
     "mean": -1.0465,
     "lo": null,
     "hi": null,
     "n": 1,
     "windows": 1
-   }
+   },
+   "activity": {
+    "windows": 142,
+    "trades": 1,
+    "expected": 7.0,
+    "ratio": 0.14
+   },
+   "text": "Collecting: 1 of 300 trades needed before any verdict. Activity check on 2026-12-11: 1 trades so far vs about 7 expected from the backtest."
   },
   "conservative": {
    "mean": -1.0465,
@@ -43,12 +49,12 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 316,
+   "total": 320,
    "trade": 1,
    "no_trade": 283,
-   "skipped": 32,
+   "skipped": 36,
    "skipped_reasons": {
-    "price feed stale": 32
+    "price feed stale": 36
    }
   }
  },
@@ -260,35 +266,12 @@
   }
  ],
  "status": {
-  "started_utc": "2026-11-27 18:50:03",
-  "errors": [
-   "2026-11-28 04:53:08 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:08 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:09 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:10 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:11 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:12 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:12 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:13 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:14 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:14 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:15 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:16 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:17 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:17 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:18 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:19 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:20 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:20 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:21 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 04:53:22 no Chainlink price for 15 s; reconnecting"
-  ],
-  "decisions": 226,
+  "started_utc": "2026-11-28 05:00:03",
+  "errors": [],
+  "decisions": 0,
   "trades": 0,
   "settled": 0,
-  "skipped": {
-   "price feed stale": 14
-  },
+  "skipped": {},
   "model": {
    "trained_days": 73,
    "first_day": "2026-09-10",
@@ -298,36 +281,36 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.109,
-   "p95": 0.128,
-   "max": 0.17,
+   "p50": 0.153,
+   "p95": 0.53,
+   "max": 0.574,
    "n": 3000
   },
   "price_feed_gap_s": {
-   "p50": 1.082,
-   "p95": 1.459,
-   "max": 2.605,
-   "n": 600
+   "p50": 1.072,
+   "p95": 1.494,
+   "max": 1.931,
+   "n": 147
   },
   "price_feed_obs_lag_s": {
-   "p50": 1.426,
-   "p95": 1.944,
-   "max": 2.405,
-   "n": 600
+   "p50": 1.417,
+   "p95": 1.948,
+   "max": 2.407,
+   "n": 148
   },
   "price_feed_msgs": {
-   "crypto_prices/list": 5,
-   "crypto_prices_twap_sixty/list": 5,
-   "crypto_prices_chainlink": 33427,
-   "crypto_prices_twap_sixty": 33422
+   "crypto_prices/list": 1,
+   "crypto_prices_twap_sixty/list": 1,
+   "crypto_prices_twap_sixty": 148,
+   "crypto_prices_chainlink": 148
   },
-  "price_feed_last_obs_age_s": 2316.1,
+  "price_feed_last_obs_age_s": 1.7,
   "load_avg": [
-   0.09,
+   0.03,
    0.07,
-   0.01
+   0.02
   ],
-  "price_feed_age_s": 2314.8,
-  "order_book_age_s": 0.6
+  "price_feed_age_s": 0.2,
+  "order_book_age_s": 0.0
  }
 }

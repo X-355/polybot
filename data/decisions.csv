@@ -315,3 +315,7 @@ decided_utc,window_start,left,status,p_model,p_formula,edge,side,up_bid,up_ask,u
 2026-11-28 04:44:50,1795840800,10,skipped: price feed stale,,,,,,,,,,,,,
 2026-11-28 04:49:30,1795841100,30,skipped: price feed stale,,,,,,,,,,,,,
 2026-11-28 04:49:50,1795841100,10,skipped: price feed stale,,,,,,,,,,,,,
+2026-11-28 04:54:30,1795841400,30,skipped: price feed stale,,,,,,,,,,,,,
+2026-11-28 04:54:50,1795841400,10,skipped: price feed stale,,,,,,,,,,,,,
+2026-11-28 04:59:30,1795841700,30,skipped: price feed stale,,,,,,,,,,,,,
+2026-11-28 04:59:50,1795841700,10,skipped: price feed stale,,,,,,,,,,,,,
