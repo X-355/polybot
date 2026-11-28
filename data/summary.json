@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-28 05:32:38",
+ "updated_utc": "2026-11-28 06:02:40",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -15,12 +15,12 @@
     "windows": 1
    },
    "activity": {
-    "windows": 148,
+    "windows": 154,
     "trades": 1,
-    "expected": 7.3,
-    "ratio": 0.14
+    "expected": 7.5,
+    "ratio": 0.13
    },
-   "text": "Collecting: 1 of 300 trades needed before any verdict. Activity check on 2026-12-11: 1 trades so far vs about 7 expected from the backtest."
+   "text": "Collecting: 1 of 300 trades needed before any verdict. Activity check on 2026-12-11: 1 trades so far vs about 8 expected from the backtest."
   },
   "conservative": {
    "mean": -1.0465,
@@ -49,9 +49,9 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 332,
+   "total": 344,
    "trade": 1,
-   "no_trade": 295,
+   "no_trade": 307,
    "skipped": 36,
    "skipped_reasons": {
     "price feed stale": 36
@@ -268,7 +268,7 @@
  "status": {
   "started_utc": "2026-11-28 05:00:03",
   "errors": [],
-  "decisions": 12,
+  "decisions": 24,
   "trades": 0,
   "settled": 0,
   "skipped": {},
@@ -281,36 +281,36 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.096,
-   "p95": 0.18,
-   "max": 0.218,
+   "p50": 0.105,
+   "p95": 0.135,
+   "max": 0.144,
    "n": 3000
   },
   "price_feed_gap_s": {
-   "p50": 1.055,
-   "p95": 1.449,
-   "max": 2.281,
+   "p50": 1.043,
+   "p95": 1.476,
+   "max": 1.934,
    "n": 600
   },
   "price_feed_obs_lag_s": {
-   "p50": 1.505,
-   "p95": 2.155,
-   "max": 2.787,
+   "p50": 1.448,
+   "p95": 1.946,
+   "max": 2.229,
    "n": 600
   },
   "price_feed_msgs": {
    "crypto_prices/list": 1,
    "crypto_prices_twap_sixty/list": 1,
-   "crypto_prices_twap_sixty": 1924,
-   "crypto_prices_chainlink": 1924
+   "crypto_prices_twap_sixty": 3712,
+   "crypto_prices_chainlink": 3713
   },
-  "price_feed_last_obs_age_s": 2.5,
+  "price_feed_last_obs_age_s": 1.9,
   "load_avg": [
-   0.1,
+   0.09,
    0.08,
-   0.03
+   0.01
   ],
-  "price_feed_age_s": 1.1,
+  "price_feed_age_s": 0.4,
   "order_book_age_s": 0.0
  }
 }
