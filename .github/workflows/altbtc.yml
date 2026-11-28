@@ -1,0 +1,41 @@
+name: ALT/BTC tests (research)
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  trend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q pandas numpy
+      - run: python research/altbtc/altbtc_trend.py research/results/altbtc
+      - uses: actions/upload-artifact@v4
+        with: { name: altbtc_trend, path: research/results/altbtc/ }
+  fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q pandas numpy scikit-learn
+      - run: python research/altbtc/altbtc_fast.py research/results/altbtc
+      - uses: actions/upload-artifact@v4
+        with: { name: altbtc_fast, path: research/results/altbtc/ }
+  commit:
+    needs: [trend, fast]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: altbtc_*, path: /tmp/res, merge-multiple: true }
+      - run: |
+          git config user.name research-bot; git config user.email research-bot@users.noreply.github.com
+          mkdir -p research/results/altbtc && cp /tmp/res/*.json research/results/altbtc/ 2>/dev/null || true
+          git add research/results/altbtc
+          git commit -m "ALT/BTC tests $(date -u +%F)" || echo "nothing to commit"
+          git pull -q --rebase && git push
