@@ -1,0 +1,82 @@
+{
+ "updated_utc": "2026-11-28 06:32:07",
+ "started_utc": "2026-11-28 06:30:05",
+ "paper_only": true,
+ "rules": {
+  "pairs": [
+   "ADABTC",
+   "AVAXBTC",
+   "BNBBTC",
+   "DOGEBTC",
+   "DOTBTC",
+   "ETHBTC",
+   "LINKBTC",
+   "LTCBTC",
+   "SOLBTC",
+   "XRPBTC"
+  ],
+  "horizon_min": 15,
+  "threshold": "|predicted 15-min move| > 1.0 x (0.3% + one price step)",
+  "prices": "real best ask to buy / best bid to sell, worse of two quotes 1 s apart, both at entry and exit",
+  "fee_per_side_pct": 0.1,
+  "stake_btc": 0.01,
+  "min_trades": 200,
+  "max_trades": 600,
+  "activity_check": "after 30 days stop if trades < 1/3 of expected (0.28/day)",
+  "verdict_rule": "edge if 95% CI of mean net per trade (clustered by candle) is above 0; no edge if below 0"
+ },
+ "verdict": "collecting",
+ "days_running": 0.0,
+ "expected_trades_so_far": 0.0,
+ "result": null,
+ "coin_flip_control": null,
+ "open_positions": [],
+ "stake_fits_share": null,
+ "backtest_expectation": {
+  "trades": 290,
+  "per_day": 0.28,
+  "net_pct": 0.4615,
+  "t_cluster": -0.06,
+  "by_year": {
+   "2024": {
+    "trades": 159,
+    "net_pct": -0.38
+   },
+   "2025": {
+    "trades": 113,
+    "net_pct": 1.602
+   },
+   "2026": {
+    "trades": 18,
+    "net_pct": 0.735
+   }
+  },
+  "by_pair": {
+   "ADABTC": -1.069,
+   "AVAXBTC": 1.32,
+   "BNBBTC": 2.213,
+   "DOGEBTC": 2.249,
+   "DOTBTC": 1.031,
+   "ETHBTC": 0.529,
+   "LINKBTC": 0.606,
+   "LTCBTC": 0.796,
+   "SOLBTC": 0.193,
+   "XRPBTC": -0.721
+  }
+ },
+ "recent": [],
+ "status": {
+  "checks": 0,
+  "skipped": 0,
+  "signals": 0,
+  "skip_reasons": {},
+  "ws_msgs": 2047,
+  "ws_reconnects": 0,
+  "last_msg_age_s": 0.1,
+  "median_candle_delay_s": null,
+  "books": 10,
+  "process_started_utc": "2026-11-28 06:30:05",
+  "errors": [],
+  "model_trained_to": "2026-10-31 23:35:00"
+ }
+}
