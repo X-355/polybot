@@ -1,0 +1,19 @@
+name: ALT/BTC bot - train and freeze model
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q numpy==1.26.4 scikit-learn==1.5.2 joblib==1.4.2 pandas==2.2.3
+      - run: python research/altbtc/train_live.py
+      - run: |
+          git config user.name research-bot; git config user.email research-bot@users.noreply.github.com
+          git add altbot/model research/results/altbtc/train_live.json
+          git commit -m "ALT/BTC bot: frozen 15-min model $(date -u +%F)" || echo "nothing to commit"
+          git pull -q --rebase && git push
