@@ -210,10 +210,13 @@ async def rtds_loop():
     flt = json.dumps({"symbol": "btc/usd"}, separators=(",", ":"))
     sub = {"action": "subscribe", "subscriptions": [{"topic": t, "type": "*", "filters": flt}
                                                     for t in ("crypto_prices_chainlink", "crypto_prices_twap_sixty")]}
+    backoff = 3
     while True:
         try:
             async with websockets.connect(RTDS_WS, ping_interval=None, max_size=2 ** 23, open_timeout=10) as ws:
                 await ws.send(json.dumps(sub))
+                conn_start = time.time()              # give each new connection its own 15 s to deliver a price
+                got_price = False
                 pinger = asyncio.create_task(text_ping(ws, 5))
                 try:
                     while True:
@@ -222,8 +225,8 @@ async def rtds_loop():
                         except asyncio.TimeoutError:
                             S.err("price feed silent for 15 s; reconnecting")
                             break
-                        if S.cl_recv and time.time() - S.cl_recv > 15:
-                            S.err("no Chainlink price for 15 s; reconnecting")
+                        if time.time() - max(S.cl_recv or 0, conn_start) > 15:
+                            S.err("no Chainlink price for 15 s on this connection; reconnecting")
                             break
                         if not msg or msg[0] != "{":
                             continue
@@ -248,6 +251,8 @@ async def rtds_loop():
                                 S.cl_obs_lag.append(now_ - int(it["timestamp"]) / 1000)
                                 S.cl_known = s if S.cl_known is None else max(S.cl_known, s)
                                 S.cl_recv = now_
+                                if not got_price:
+                                    got_price = True; backoff = 3
                         if len(S.cl) > 1200:
                             cut = max(S.cl) - 900
                             for d in (S.cl, S.tw):
@@ -255,9 +260,11 @@ async def rtds_loop():
                                     del d[k]
                 finally:
                     pinger.cancel()
+            if not got_price:                         # connection gave no price at all: wait longer before trying again
+                await asyncio.sleep(backoff); backoff = min(backoff * 2, 120)
         except Exception as e:
             S.err(f"price feed connection: {e!r}")
-            await asyncio.sleep(3)
+            await asyncio.sleep(backoff); backoff = min(backoff * 2, 120)
 
 
 # ---------------------------------------------------------------- decisions
