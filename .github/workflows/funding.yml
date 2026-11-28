@@ -1,0 +1,19 @@
+name: Funding-rate carry test (research)
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q pandas numpy
+      - run: python research/funding/funding_carry.py research/results/funding
+      - run: |
+          git config user.name research-bot; git config user.email research-bot@users.noreply.github.com
+          git add research/results/funding
+          git commit -m "Funding carry test $(date -u +%F)" || echo "nothing to commit"
+          git pull -q --rebase && git push
