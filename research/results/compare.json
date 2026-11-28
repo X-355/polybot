@@ -1,0 +1,782 @@
+{
+ "_all": {
+  "lag": {
+   "lag_max": Infinity,
+   "share_over_2s": 0.0017,
+   "share_over_2s_last30": 0.001,
+   "median_lag": 0.117,
+   "p95_lag5": 0.416
+  },
+  "days": 75,
+  "snapshots": 129151,
+  "brier_last30": [
+   [
+    30,
+    0.01671,
+    0.01641
+   ],
+   [
+    10,
+    0.00252,
+    0.00214
+   ]
+  ],
+  "strategies": {
+   "60s lag0 Random side (control)": {
+    "n": 8633,
+    "ret": -1.636,
+    "t": null
+   },
+   "60s lag0 Always buy the favourite": {
+    "n": 8633,
+    "ret": -1.042,
+    "t": -3.84
+   },
+   "60s lag1 Always buy the favourite": {
+    "n": 8630,
+    "ret": -1.133,
+    "t": -4.25
+   },
+   "60s lag0 Gradient tree model, edge > 2c": {
+    "n": 1038,
+    "ret": 0.974,
+    "t": 0.35
+   },
+   "60s lag1 Gradient tree model, edge > 2c": {
+    "n": 1038,
+    "ret": -1.824,
+    "t": -0.68
+   },
+   "60s lag0 Gradient tree model, edge > 5c": {
+    "n": 392,
+    "ret": 6.34,
+    "t": 1.1
+   },
+   "60s lag1 Gradient tree model, edge > 5c": {
+    "n": 392,
+    "ret": 2.417,
+    "t": 0.44
+   },
+   "30s lag0 Random side (control)": {
+    "n": 8636,
+    "ret": -1.118,
+    "t": null
+   },
+   "30s lag0 Always buy the favourite": {
+    "n": 8636,
+    "ret": -0.262,
+    "t": -1.84
+   },
+   "30s lag1 Always buy the favourite": {
+    "n": 8635,
+    "ret": -0.279,
+    "t": -2.02
+   },
+   "30s lag0 Gradient tree model, edge > 2c": {
+    "n": 368,
+    "ret": 3.916,
+    "t": 0.99
+   },
+   "30s lag1 Gradient tree model, edge > 2c": {
+    "n": 368,
+    "ret": 2.198,
+    "t": 0.59
+   },
+   "30s lag0 Gradient tree model, edge > 5c": {
+    "n": 120,
+    "ret": 13.066,
+    "t": 1.45
+   },
+   "30s lag1 Gradient tree model, edge > 5c": {
+    "n": 120,
+    "ret": 10.089,
+    "t": 1.23
+   },
+   "10s lag0 Random side (control)": {
+    "n": 8634,
+    "ret": -0.855,
+    "t": null
+   },
+   "10s lag0 Always buy the favourite": {
+    "n": 8634,
+    "ret": 0.015,
+    "t": 0.27
+   },
+   "10s lag1 Always buy the favourite": {
+    "n": 8634,
+    "ret": -0.022,
+    "t": -0.42
+   },
+   "10s lag0 Gradient tree model, edge > 2c": {
+    "n": 72,
+    "ret": 8.198,
+    "t": 1.03
+   },
+   "10s lag1 Gradient tree model, edge > 2c": {
+    "n": 72,
+    "ret": 8.484,
+    "t": 1.15
+   },
+   "10s lag0 Gradient tree model, edge > 5c": {
+    "n": 26,
+    "ret": 16.035,
+    "t": 1.04
+   },
+   "10s lag1 Gradient tree model, edge > 5c": {
+    "n": 26,
+    "ret": 16.818,
+    "t": 1.26
+   }
+  }
+ },
+ "_lag0.5": {
+  "lag": {
+   "lag_max": 0.5,
+   "share_over_2s": 0.0017,
+   "share_over_2s_last30": 0.001,
+   "median_lag": 0.117,
+   "p95_lag5": 0.416
+  },
+  "days": 75,
+  "snapshots": 123407,
+  "brier_last30": [
+   [
+    30,
+    0.01503,
+    0.0148
+   ],
+   [
+    10,
+    0.00235,
+    0.00204
+   ]
+  ],
+  "strategies": {
+   "60s lag0 Random side (control)": {
+    "n": 8168,
+    "ret": -1.598,
+    "t": null
+   },
+   "60s lag0 Always buy the favourite": {
+    "n": 8168,
+    "ret": -0.954,
+    "t": -3.51
+   },
+   "60s lag1 Always buy the favourite": {
+    "n": 8166,
+    "ret": -1.076,
+    "t": -4.03
+   },
+   "60s lag0 Gradient tree model, edge > 2c": {
+    "n": 1021,
+    "ret": -0.472,
+    "t": -0.18
+   },
+   "60s lag1 Gradient tree model, edge > 2c": {
+    "n": 1021,
+    "ret": -1.887,
+    "t": -0.76
+   },
+   "60s lag0 Gradient tree model, edge > 5c": {
+    "n": 422,
+    "ret": 4.276,
+    "t": 0.83
+   },
+   "60s lag1 Gradient tree model, edge > 5c": {
+    "n": 422,
+    "ret": 1.901,
+    "t": 0.39
+   },
+   "30s lag0 Random side (control)": {
+    "n": 8234,
+    "ret": -1.077,
+    "t": null
+   },
+   "30s lag0 Always buy the favourite": {
+    "n": 8234,
+    "ret": -0.15,
+    "t": -1.09
+   },
+   "30s lag1 Always buy the favourite": {
+    "n": 8233,
+    "ret": -0.149,
+    "t": -1.12
+   },
+   "30s lag0 Gradient tree model, edge > 2c": {
+    "n": 313,
+    "ret": 0.222,
+    "t": 0.06
+   },
+   "30s lag1 Gradient tree model, edge > 2c": {
+    "n": 313,
+    "ret": 0.567,
+    "t": 0.15
+   },
+   "30s lag0 Gradient tree model, edge > 5c": {
+    "n": 127,
+    "ret": 12.835,
+    "t": 1.56
+   },
+   "30s lag1 Gradient tree model, edge > 5c": {
+    "n": 127,
+    "ret": 12.673,
+    "t": 1.65
+   },
+   "10s lag0 Random side (control)": {
+    "n": 8386,
+    "ret": -0.847,
+    "t": null
+   },
+   "10s lag0 Always buy the favourite": {
+    "n": 8386,
+    "ret": 0.004,
+    "t": 0.07
+   },
+   "10s lag1 Always buy the favourite": {
+    "n": 8386,
+    "ret": -0.033,
+    "t": -0.65
+   },
+   "10s lag0 Gradient tree model, edge > 2c": {
+    "n": 85,
+    "ret": 2.636,
+    "t": 0.37
+   },
+   "10s lag1 Gradient tree model, edge > 2c": {
+    "n": 85,
+    "ret": 4.039,
+    "t": 0.62
+   },
+   "10s lag0 Gradient tree model, edge > 5c": {
+    "n": 43,
+    "ret": 10.725,
+    "t": 0.84
+   },
+   "10s lag1 Gradient tree model, edge > 5c": {
+    "n": 43,
+    "ret": 12.906,
+    "t": 1.18
+   }
+  }
+ },
+ "_lag0.5_reverse": {
+  "lag": {
+   "lag_max": 0.5,
+   "share_over_2s": 0.0017,
+   "share_over_2s_last30": 0.001,
+   "median_lag": 0.117,
+   "p95_lag5": 0.416
+  },
+  "days": 75,
+  "snapshots": 123407,
+  "brier_last30": [
+   [
+    30,
+    0.01338,
+    0.01287
+   ],
+   [
+    10,
+    0.00295,
+    0.00242
+   ]
+  ],
+  "strategies": {
+   "60s lag0 Random side (control)": {
+    "n": 8339,
+    "ret": -1.663,
+    "t": null
+   },
+   "60s lag0 Always buy the favourite": {
+    "n": 8339,
+    "ret": -0.069,
+    "t": -0.26
+   },
+   "60s lag1 Always buy the favourite": {
+    "n": 8339,
+    "ret": -0.362,
+    "t": -1.41
+   },
+   "60s lag0 Gradient tree model, edge > 2c": {
+    "n": 994,
+    "ret": 0.535,
+    "t": 0.22
+   },
+   "60s lag1 Gradient tree model, edge > 2c": {
+    "n": 994,
+    "ret": -1.247,
+    "t": -0.53
+   },
+   "60s lag0 Gradient tree model, edge > 5c": {
+    "n": 308,
+    "ret": 16.019,
+    "t": 2.73
+   },
+   "60s lag1 Gradient tree model, edge > 5c": {
+    "n": 308,
+    "ret": 11.363,
+    "t": 2.06
+   },
+   "30s lag0 Random side (control)": {
+    "n": 8481,
+    "ret": -1.193,
+    "t": null
+   },
+   "30s lag0 Always buy the favourite": {
+    "n": 8481,
+    "ret": -0.185,
+    "t": -1.43
+   },
+   "30s lag1 Always buy the favourite": {
+    "n": 8480,
+    "ret": -0.263,
+    "t": -2.07
+   },
+   "30s lag0 Gradient tree model, edge > 2c": {
+    "n": 280,
+    "ret": 2.886,
+    "t": 0.73
+   },
+   "30s lag1 Gradient tree model, edge > 2c": {
+    "n": 280,
+    "ret": 0.341,
+    "t": 0.09
+   },
+   "30s lag0 Gradient tree model, edge > 5c": {
+    "n": 92,
+    "ret": 18.406,
+    "t": 1.89
+   },
+   "30s lag1 Gradient tree model, edge > 5c": {
+    "n": 92,
+    "ret": 13.239,
+    "t": 1.51
+   },
+   "10s lag0 Random side (control)": {
+    "n": 8513,
+    "ret": -1.022,
+    "t": null
+   },
+   "10s lag0 Always buy the favourite": {
+    "n": 8513,
+    "ret": -0.187,
+    "t": -2.85
+   },
+   "10s lag1 Always buy the favourite": {
+    "n": 8513,
+    "ret": -0.205,
+    "t": -3.38
+   },
+   "10s lag0 Gradient tree model, edge > 2c": {
+    "n": 70,
+    "ret": 0.092,
+    "t": 0.01
+   },
+   "10s lag1 Gradient tree model, edge > 2c": {
+    "n": 70,
+    "ret": 0.83,
+    "t": 0.14
+   },
+   "10s lag0 Gradient tree model, edge > 5c": {
+    "n": 33,
+    "ret": 7.377,
+    "t": 0.57
+   },
+   "10s lag1 Gradient tree model, edge > 5c": {
+    "n": 33,
+    "ret": 9.512,
+    "t": 0.79
+   }
+  }
+ },
+ "_lag2": {
+  "lag": {
+   "lag_max": 2.0,
+   "share_over_2s": 0.0017,
+   "share_over_2s_last30": 0.001,
+   "median_lag": 0.117,
+   "p95_lag5": 0.416
+  },
+  "days": 75,
+  "snapshots": 128817,
+  "brier_last30": [
+   [
+    30,
+    0.01646,
+    0.01624
+   ],
+   [
+    10,
+    0.0024,
+    0.00201
+   ]
+  ],
+  "strategies": {
+   "60s lag0 Random side (control)": {
+    "n": 8610,
+    "ret": -1.635,
+    "t": null
+   },
+   "60s lag0 Always buy the favourite": {
+    "n": 8610,
+    "ret": -1.059,
+    "t": -3.9
+   },
+   "60s lag1 Always buy the favourite": {
+    "n": 8607,
+    "ret": -1.144,
+    "t": -4.29
+   },
+   "60s lag0 Gradient tree model, edge > 2c": {
+    "n": 1223,
+    "ret": -2.095,
+    "t": -0.82
+   },
+   "60s lag1 Gradient tree model, edge > 2c": {
+    "n": 1221,
+    "ret": -3.91,
+    "t": -1.58
+   },
+   "60s lag0 Gradient tree model, edge > 5c": {
+    "n": 461,
+    "ret": 2.946,
+    "t": 0.56
+   },
+   "60s lag1 Gradient tree model, edge > 5c": {
+    "n": 461,
+    "ret": -0.583,
+    "t": -0.12
+   },
+   "30s lag0 Random side (control)": {
+    "n": 8615,
+    "ret": -1.095,
+    "t": null
+   },
+   "30s lag0 Always buy the favourite": {
+    "n": 8615,
+    "ret": -0.228,
+    "t": -1.62
+   },
+   "30s lag1 Always buy the favourite": {
+    "n": 8614,
+    "ret": -0.245,
+    "t": -1.8
+   },
+   "30s lag0 Gradient tree model, edge > 2c": {
+    "n": 412,
+    "ret": 3.573,
+    "t": 0.9
+   },
+   "30s lag1 Gradient tree model, edge > 2c": {
+    "n": 412,
+    "ret": 3.222,
+    "t": 0.86
+   },
+   "30s lag0 Gradient tree model, edge > 5c": {
+    "n": 163,
+    "ret": 4.191,
+    "t": 0.56
+   },
+   "30s lag1 Gradient tree model, edge > 5c": {
+    "n": 163,
+    "ret": 1.877,
+    "t": 0.27
+   },
+   "10s lag0 Random side (control)": {
+    "n": 8616,
+    "ret": -0.854,
+    "t": null
+   },
+   "10s lag0 Always buy the favourite": {
+    "n": 8616,
+    "ret": 0.023,
+    "t": 0.42
+   },
+   "10s lag1 Always buy the favourite": {
+    "n": 8616,
+    "ret": -0.014,
+    "t": -0.27
+   },
+   "10s lag0 Gradient tree model, edge > 2c": {
+    "n": 81,
+    "ret": 8.977,
+    "t": 1.29
+   },
+   "10s lag1 Gradient tree model, edge > 2c": {
+    "n": 81,
+    "ret": 9.635,
+    "t": 1.49
+   },
+   "10s lag0 Gradient tree model, edge > 5c": {
+    "n": 40,
+    "ret": 14.738,
+    "t": 1.02
+   },
+   "10s lag1 Gradient tree model, edge > 5c": {
+    "n": 40,
+    "ret": 18.92,
+    "t": 1.43
+   }
+  }
+ },
+ "_lag2_reverse": {
+  "lag": {
+   "lag_max": 2.0,
+   "share_over_2s": 0.0017,
+   "share_over_2s_last30": 0.001,
+   "median_lag": 0.117,
+   "p95_lag5": 0.416
+  },
+  "days": 75,
+  "snapshots": 128817,
+  "brier_last30": [
+   [
+    30,
+    0.01386,
+    0.0133
+   ],
+   [
+    10,
+    0.00313,
+    0.00251
+   ]
+  ],
+  "strategies": {
+   "60s lag0 Random side (control)": {
+    "n": 8596,
+    "ret": -1.673,
+    "t": null
+   },
+   "60s lag0 Always buy the favourite": {
+    "n": 8596,
+    "ret": -0.1,
+    "t": -0.38
+   },
+   "60s lag1 Always buy the favourite": {
+    "n": 8596,
+    "ret": -0.398,
+    "t": -1.55
+   },
+   "60s lag0 Gradient tree model, edge > 2c": {
+    "n": 995,
+    "ret": 1.397,
+    "t": 0.6
+   },
+   "60s lag1 Gradient tree model, edge > 2c": {
+    "n": 995,
+    "ret": -0.176,
+    "t": -0.08
+   },
+   "60s lag0 Gradient tree model, edge > 5c": {
+    "n": 309,
+    "ret": 9.677,
+    "t": 1.77
+   },
+   "60s lag1 Gradient tree model, edge > 5c": {
+    "n": 309,
+    "ret": 7.476,
+    "t": 1.41
+   },
+   "30s lag0 Random side (control)": {
+    "n": 8594,
+    "ret": -1.198,
+    "t": null
+   },
+   "30s lag0 Always buy the favourite": {
+    "n": 8594,
+    "ret": -0.187,
+    "t": -1.43
+   },
+   "30s lag1 Always buy the favourite": {
+    "n": 8593,
+    "ret": -0.277,
+    "t": -2.15
+   },
+   "30s lag0 Gradient tree model, edge > 2c": {
+    "n": 291,
+    "ret": 5.013,
+    "t": 1.35
+   },
+   "30s lag1 Gradient tree model, edge > 2c": {
+    "n": 290,
+    "ret": 2.616,
+    "t": 0.74
+   },
+   "30s lag0 Gradient tree model, edge > 5c": {
+    "n": 93,
+    "ret": 22.99,
+    "t": 2.51
+   },
+   "30s lag1 Gradient tree model, edge > 5c": {
+    "n": 93,
+    "ret": 18.425,
+    "t": 2.11
+   },
+   "10s lag0 Random side (control)": {
+    "n": 8595,
+    "ret": -1.028,
+    "t": null
+   },
+   "10s lag0 Always buy the favourite": {
+    "n": 8595,
+    "ret": -0.181,
+    "t": -2.71
+   },
+   "10s lag1 Always buy the favourite": {
+    "n": 8595,
+    "ret": -0.196,
+    "t": -3.19
+   },
+   "10s lag0 Gradient tree model, edge > 2c": {
+    "n": 60,
+    "ret": 9.975,
+    "t": 1.41
+   },
+   "10s lag1 Gradient tree model, edge > 2c": {
+    "n": 60,
+    "ret": 12.449,
+    "t": 2.18
+   },
+   "10s lag0 Gradient tree model, edge > 5c": {
+    "n": 21,
+    "ret": 30.838,
+    "t": 1.97
+   },
+   "10s lag1 Gradient tree model, edge > 5c": {
+    "n": 21,
+    "ret": 35.74,
+    "t": 2.65
+   }
+  }
+ },
+ "_reverse": {
+  "lag": {
+   "lag_max": Infinity,
+   "share_over_2s": 0.0017,
+   "share_over_2s_last30": 0.001,
+   "median_lag": 0.117,
+   "p95_lag5": 0.416
+  },
+  "days": 75,
+  "snapshots": 129151,
+  "brier_last30": [
+   [
+    30,
+    0.014,
+    0.01326
+   ],
+   [
+    10,
+    0.00313,
+    0.00257
+   ]
+  ],
+  "strategies": {
+   "60s lag0 Random side (control)": {
+    "n": 8604,
+    "ret": -1.673,
+    "t": null
+   },
+   "60s lag0 Always buy the favourite": {
+    "n": 8604,
+    "ret": -0.094,
+    "t": -0.36
+   },
+   "60s lag1 Always buy the favourite": {
+    "n": 8604,
+    "ret": -0.392,
+    "t": -1.53
+   },
+   "60s lag0 Gradient tree model, edge > 2c": {
+    "n": 927,
+    "ret": 0.347,
+    "t": 0.14
+   },
+   "60s lag1 Gradient tree model, edge > 2c": {
+    "n": 927,
+    "ret": -1.21,
+    "t": -0.52
+   },
+   "60s lag0 Gradient tree model, edge > 5c": {
+    "n": 260,
+    "ret": 13.936,
+    "t": 2.33
+   },
+   "60s lag1 Gradient tree model, edge > 5c": {
+    "n": 260,
+    "ret": 10.234,
+    "t": 1.81
+   },
+   "30s lag0 Random side (control)": {
+    "n": 8602,
+    "ret": -1.2,
+    "t": null
+   },
+   "30s lag0 Always buy the favourite": {
+    "n": 8602,
+    "ret": -0.181,
+    "t": -1.37
+   },
+   "30s lag1 Always buy the favourite": {
+    "n": 8601,
+    "ret": -0.27,
+    "t": -2.09
+   },
+   "30s lag0 Gradient tree model, edge > 2c": {
+    "n": 274,
+    "ret": 9.11,
+    "t": 2.35
+   },
+   "30s lag1 Gradient tree model, edge > 2c": {
+    "n": 273,
+    "ret": 5.843,
+    "t": 1.59
+   },
+   "30s lag0 Gradient tree model, edge > 5c": {
+    "n": 66,
+    "ret": 33.889,
+    "t": 2.91
+   },
+   "30s lag1 Gradient tree model, edge > 5c": {
+    "n": 66,
+    "ret": 26.922,
+    "t": 2.47
+   },
+   "10s lag0 Random side (control)": {
+    "n": 8599,
+    "ret": -1.028,
+    "t": null
+   },
+   "10s lag0 Always buy the favourite": {
+    "n": 8599,
+    "ret": -0.18,
+    "t": -2.71
+   },
+   "10s lag1 Always buy the favourite": {
+    "n": 8599,
+    "ret": -0.196,
+    "t": -3.19
+   },
+   "10s lag0 Gradient tree model, edge > 2c": {
+    "n": 59,
+    "ret": 2.596,
+    "t": 0.36
+   },
+   "10s lag1 Gradient tree model, edge > 2c": {
+    "n": 59,
+    "ret": 3.936,
+    "t": 0.63
+   },
+   "10s lag0 Gradient tree model, edge > 5c": {
+    "n": 21,
+    "ret": 26.309,
+    "t": 1.62
+   },
+   "10s lag1 Gradient tree model, edge > 5c": {
+    "n": 21,
+    "ret": 29.238,
+    "t": 1.91
+   }
+  }
+ }
+}
