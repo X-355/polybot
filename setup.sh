@@ -58,3 +58,27 @@ if [ -f altbot/model/alt15.joblib ]; then
     systemctl restart altbot && echo "$ACODE" > $STATE/altcode
   fi
 fi
+
+# ---- BTC funding-rate carry paper tracker ----
+mkdir -p /opt/polybot/carrydata
+cat > /tmp/carrybot.service <<UNITEOF
+[Unit]
+Description=BTC funding carry paper tracker (no real money)
+After=network-online.target
+Wants=network-online.target
+[Service]
+WorkingDirectory=$REPO/carrybot
+Environment=CARRY_DATA=/opt/polybot/carrydata
+ExecStart=$VENV/bin/python -u carry.py
+Restart=always
+RestartSec=60
+MemoryMax=120M
+[Install]
+WantedBy=multi-user.target
+UNITEOF
+CUNIT=/etc/systemd/system/carrybot.service
+if ! cmp -s /tmp/carrybot.service $CUNIT; then cp /tmp/carrybot.service $CUNIT; systemctl daemon-reload; systemctl enable -q carrybot; fi
+CCODE=$(cat carrybot/*.py | sha256sum | cut -c1-16)
+if [ "$(cat $STATE/carrycode 2>/dev/null)" != "$CCODE" ] || ! systemctl is-active -q carrybot; then
+  systemctl restart carrybot && echo "$CCODE" > $STATE/carrycode
+fi

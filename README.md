@@ -62,3 +62,12 @@ ALT/BTC pairs (ETH, BNB, SOL, XRP, ADA, DOGE, LTC, LINK, DOT, AVAX against BTC).
 pair, entering one candle late), 2024 – Oct 2026 gave 290 trades (0.28 a day), +0.46% average per trade —
 but 2024 was negative (−0.38%) and most of the profit came from a few sharp moves in 2025 when many pairs
 moved together. So a verdict will take a long time, and the most likely result is "no edge".
+
+## BTC funding-rate carry tracker (`carrybot/`) — no real money
+
+Holds a pretend $10,000 of BTC on Binance spot and shorts the same amount of BTC on the BTCUSDT perpetual,
+opened once at the real best ask/bid with fees (spot 0.1%, futures 0.05%), never rebalanced. Every 8-hour funding
+payment is credited or charged as Binance does. Marked hourly at the prices you could close at, after closing fees.
+Return is shown on $20,000 of capital (the BTC + 100% margin). Backtest (2020 – Oct 2026): it earned about
++6% a year on capital, but only about 2.6% in 2025 and 1.3% in 2026 to October. The question it answers: is it
+currently paying more than cash?
