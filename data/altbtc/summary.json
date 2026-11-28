@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-28 12:02:33",
+ "updated_utc": "2026-11-28 12:32:36",
  "started_utc": "2026-11-28 06:30:05",
  "paper_only": true,
  "rules": {
@@ -26,7 +26,7 @@
   "verdict_rule": "edge if 95% CI of mean net per trade (clustered by candle) is above 0; no edge if below 0"
  },
  "verdict": "collecting",
- "days_running": 0.23,
+ "days_running": 0.25,
  "expected_trades_so_far": 0.1,
  "result": null,
  "coin_flip_control": null,
@@ -66,15 +66,15 @@
  },
  "recent": [],
  "status": {
-  "checks": 660,
-  "skipped": 14,
+  "checks": 720,
+  "skipped": 16,
   "signals": 0,
   "skip_reasons": {
-   "bid/ask stale": 14
+   "bid/ask stale": 16
   },
-  "ws_msgs": 338699,
+  "ws_msgs": 356530,
   "ws_reconnects": 0,
-  "last_msg_age_s": 0.3,
+  "last_msg_age_s": 0.7,
   "median_candle_delay_s": 0.19,
   "books": 10,
   "process_started_utc": "2026-11-28 06:30:05",
