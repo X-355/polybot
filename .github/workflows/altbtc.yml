@@ -1,9 +1,13 @@
 name: ALT/BTC tests (research)
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      only_fast: { type: boolean, default: false }
 permissions:
   contents: write
 jobs:
   trend:
+    if: ${{ !inputs.only_fast }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:

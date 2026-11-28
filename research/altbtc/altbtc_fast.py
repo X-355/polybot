@@ -82,13 +82,31 @@ def features(d, btc):
     for k in (1, 3, 12):
         f[f"btc{k}"] = np.log(b / b.shift(k))
     f["hour"] = d.index.hour
+    ts = pd.Series(d.index, index=d.index)
     for h in HS:
-        f[f"y{h}"] = np.log(d.close.shift(-h) / d.close)
+        y = np.log(d.close.shift(-h) / d.close)
+        yd = np.log(d.close.shift(-h - 1) / d.close.shift(-1))       # enter one candle LATER (no use of the signal candle's close)
+        ok = (ts.shift(-h - 1) - ts) == pd.Timedelta(minutes=5 * (h + 1))   # no missing candles in the window
+        f[f"y{h}"] = y.where(ok); f[f"yd{h}"] = yd.where(ok)
     return f
+
+
+def tick_sizes():
+    """Smallest price step per pair, from Binance's public market info (mirror that works from cloud servers)."""
+    b = get("https://data-api.binance.vision/api/v3/exchangeInfo?symbols=" + json.dumps(PAIRS).replace(" ", ""))
+    out = {}
+    if b:
+        for s in json.loads(b).get("symbols", []):
+            for f in s.get("filters", []):
+                if f.get("filterType") == "PRICE_FILTER":
+                    out[s["symbol"]] = float(f["tickSize"])
+    return out
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
+    ticks = tick_sizes()
+    print("tick sizes", ticks, flush=True)
     btc = load("BTCUSDT")
     frames = []
     for p in PAIRS:
@@ -96,42 +114,61 @@ def main():
         if d is None or len(d) < 50000:
             print("skip", p); continue
         f = features(d, btc); f["pair"] = p
+        # one price step as a share of the price: the least you lose crossing the spread (buy at ask, sell at bid)
+        tk = ticks.get(p) or float(d.close.diff().abs().replace(0, np.nan).min())
+        f["tick_pct"] = tk / d.close
         frames.append(f)
         print(p, len(d), "candles", d.index[0], "->", d.index[-1], flush=True)
     F = pd.concat(frames).replace([np.inf, -np.inf], np.nan)
-    X = [c for c in F.columns if not c.startswith("y") and c != "pair"]
+    X = [c for c in F.columns if not c.startswith("y") and c not in ("pair", "tick_pct")]
     rng = np.random.default_rng(7)
     res = dict(pairs=sorted(F.pair.unique().tolist()), split=str(SPLIT.date()), first=str(F.index.min()), last=str(F.index.max()),
-               features=X, horizons={})
+               features=X, tick_sizes=ticks, horizons={},
+               median_tick_pct={p: round(float(F[F.pair == p].tick_pct.median() * 100), 4) for p in F.pair.unique()})
     for h in HS:
-        D = F.dropna(subset=X + [f"y{h}"])
+        D = F.dropna(subset=X + [f"y{h}", f"yd{h}"])
         # every h-th candle so trades do not overlap within a pair
         D = D[(D.index.minute // 5 + D.index.hour * 12) % h == 0]
         tr, te = D[D.index < SPLIT], D[D.index >= SPLIT]
         m = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.05, max_leaf_nodes=31, min_samples_leaf=500,
                                           l2_regularization=1.0, random_state=1).fit(tr[X], tr[f"y{h}"])
-        pred = m.predict(te[X]); y = te[f"y{h}"].to_numpy()
+        pred = m.predict(te[X]); y = te[f"y{h}"].to_numpy(); yd = te[f"yd{h}"].to_numpy()
+        yrs = te.index.year.to_numpy()
         corr = float(np.corrcoef(pred, y)[0, 1])
         hit = float(np.mean(np.sign(pred) == np.sign(y)))
         out = dict(train_rows=len(tr), test_rows=len(te), corr=round(corr, 4), direction_hit=round(hit, 4),
                    typical_move_pct=round(float(np.median(np.abs(y)) * 100), 3), rules={})
+        tick = te.tick_pct.to_numpy()
+        out["share_of_moves_within_one_tick"] = round(float(np.mean(np.abs(np.exp(y) - 1) <= tick * 1.01)), 4)
         for cost in COSTS:
             for k in (1.0, 1.5, 2.0):
-                thr = cost * k
+                cvec = cost + tick                              # fees + slippage + one full price step of spread
+                thr = cvec * k
                 side = np.where(pred > thr, 1, np.where(pred < -thr, -1, 0))
                 sel = side != 0
                 n = int(sel.sum())
                 if n < 30:
-                    out["rules"][f"cost {cost*100:.1f}% thr {k}x"] = dict(trades=n); continue
+                    out["rules"][f"cost {cost*100:.1f}%+tick thr {k}x"] = dict(trades=n); continue
                 gross = side[sel] * (np.exp(y[sel]) - 1)
-                net = gross - cost
+                net = gross - cvec[sel]
                 # control: same number of random trades with random sides
                 idx = rng.choice(len(y), n, replace=False); rs = rng.choice([-1, 1], n)
-                ctl = rs * (np.exp(y[idx]) - 1) - cost
+                ctl = rs * (np.exp(y[idx]) - 1) - cvec[idx]
                 t = float(net.mean() / (net.std(ddof=1) / np.sqrt(n))) if net.std() > 0 else None
                 by_pair = {p: round(float(net[(te.pair.to_numpy()[sel] == p)].mean() * 100), 3) for p in res["pairs"]
                            if (te.pair.to_numpy()[sel] == p).sum() >= 20}
-                out["rules"][f"cost {cost*100:.1f}% thr {k}x"] = dict(
+                g_sorted = np.sort(net)[::-1]
+                net_d = side[sel] * (np.exp(yd[sel]) - 1) - cvec[sel]
+                td = float(net_d.mean() / (net_d.std(ddof=1) / np.sqrt(n))) if net_d.std() > 0 else None
+                by_year = {int(yr): dict(trades=int((yrs[sel] == yr).sum()), net_pct=round(float(net[yrs[sel] == yr].mean() * 100), 3),
+                                         delayed_net_pct=round(float(net_d[yrs[sel] == yr].mean() * 100), 3))
+                           for yr in np.unique(yrs[sel])}
+                out["rules"][f"cost {cost*100:.1f}%+tick thr {k}x"] = dict(
+                    delayed_entry_net_pct=round(float(net_d.mean() * 100), 4), delayed_t=round(td, 2) if td else None,
+                    by_year=by_year,
+                    median_net_pct=round(float(np.median(net) * 100), 4),
+                    net_without_best_5pct=round(float(g_sorted[int(len(g_sorted) * 0.05):].mean() * 100), 4),
+                    avg_tick_pct=round(float(tick[sel].mean() * 100), 4),
                     trades=n, per_day=round(n / max(1, (te.index.max() - te.index.min()).days), 1),
                     win_rate=round(float((net > 0).mean()), 4), gross_pct=round(float(gross.mean() * 100), 4),
                     net_pct=round(float(net.mean() * 100), 4), t=round(t, 2) if t else None,
@@ -141,7 +178,7 @@ def main():
         for k2, v in out["rules"].items():
             if v.get("trades", 0) >= 30:
                 print(f"   {k2:<22} trades {v['trades']:>7} ({v['per_day']}/day) win {v['win_rate']:.3f} gross {v['gross_pct']:+.3f}% "
-                      f"net {v['net_pct']:+.3f}% t={v['t']} | random {v['random_control_net_pct']:+.3f}%", flush=True)
+                      f"net {v['net_pct']:+.3f}% t={v['t']} | delayed {v['delayed_entry_net_pct']:+.3f}% t={v['delayed_t']} | random {v['random_control_net_pct']:+.3f}%", flush=True)
     json.dump(res, open(f"{OUT}/altbtc_fast.json", "w"), indent=1)
 
 
