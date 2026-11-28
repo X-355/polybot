@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-28 14:03:12",
+ "updated_utc": "2026-11-28 14:33:14",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -49,12 +49,12 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 536,
+   "total": 548,
    "trade": 1,
    "no_trade": 399,
-   "skipped": 136,
+   "skipped": 148,
    "skipped_reasons": {
-    "price feed stale": 136
+    "price feed stale": 148
    }
   }
  },
@@ -268,32 +268,32 @@
  "status": {
   "started_utc": "2026-11-28 06:30:03",
   "errors": [
-   "2026-11-28 14:02:58 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:02:58 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:02:59 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:00 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:00 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:01 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:02 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:03 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:03 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:04 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:05 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:06 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:06 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:07 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:08 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:08 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:09 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:10 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:11 no Chainlink price for 15 s; reconnecting",
-   "2026-11-28 14:03:11 no Chainlink price for 15 s; reconnecting"
+   "2026-11-28 14:33:00 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:01 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:01 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:02 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:03 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:04 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:04 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:05 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:06 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:07 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:07 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:08 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:09 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:09 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:10 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:11 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:12 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:12 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:13 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 14:33:14 no Chainlink price for 15 s; reconnecting"
   ],
   "decisions": 80,
   "trades": 0,
   "settled": 0,
   "skipped": {
-   "price feed stale": 100
+   "price feed stale": 112
   },
   "model": {
    "trained_days": 73,
@@ -304,9 +304,9 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.118,
-   "p95": 0.84,
-   "max": 0.893,
+   "p50": 0.121,
+   "p95": 2.345,
+   "max": 2.406,
    "n": 3000
   },
   "price_feed_gap_s": {
@@ -327,13 +327,13 @@
    "crypto_prices_chainlink": 11911,
    "crypto_prices_twap_sixty": 11911
   },
-  "price_feed_last_obs_age_s": 15125.1,
+  "price_feed_last_obs_age_s": 16927.4,
   "load_avg": [
-   0.11,
-   0.12,
+   0.1,
+   0.1,
    0.09
   ],
-  "price_feed_age_s": 15123.7,
-  "order_book_age_s": 0.0
+  "price_feed_age_s": 16926.1,
+  "order_book_age_s": 0.2
  }
 }
