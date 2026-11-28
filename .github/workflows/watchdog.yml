@@ -41,3 +41,17 @@ jobs:
           elif [ -n "$open" ]; then
             gh issue close "$open" -R ${{ github.repository }} --comment "Reporting again ($age minutes ago)."
           fi
+      - name: Polybot blind (reporting, but every recent check skipped)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(python3 -c "import csv;r=list(csv.DictReader(open('data/decisions.csv')))[-24:];print(sum(x['status'].startswith('skipped') for x in r) if len(r)==24 else 0)")
+          echo "skipped in the last 24 checks: $n"
+          gh label create bot-blind -R ${{ github.repository }} --color D93F0B --description "Polybot is running but skipping every check" 2>/dev/null || true
+          open=$(gh issue list -R ${{ github.repository }} --label bot-blind --state open --json number -q '.[0].number')
+          if [ "$n" -ge 24 ]; then
+            [ -n "$open" ] || gh issue create -R ${{ github.repository }} --label bot-blind --title "Polybot is skipping every check (stale data)" \
+              --body "The last 24 checks (about 1 hour) were all skipped. See data/summary.json status.errors and skipped reasons."
+          elif [ -n "$open" ]; then
+            gh issue close "$open" -R ${{ github.repository }} --comment "Checks are going through again."
+          fi
