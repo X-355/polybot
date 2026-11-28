@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-28 02:23:11",
+ "updated_utc": "2026-11-28 02:53:13",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -43,9 +43,9 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 256,
+   "total": 268,
    "trade": 1,
-   "no_trade": 237,
+   "no_trade": 249,
    "skipped": 18,
    "skipped_reasons": {
     "price feed stale": 18
@@ -265,9 +265,10 @@
    "2026-11-27 20:50:04 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)",
    "2026-11-27 21:31:05 order book connection: ConnectionClosedError(None, None, None)",
    "2026-11-27 22:50:08 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)",
-   "2026-11-28 00:50:11 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)"
+   "2026-11-28 00:50:11 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)",
+   "2026-11-28 02:50:14 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)"
   ],
-  "decisions": 180,
+  "decisions": 192,
   "trades": 0,
   "settled": 0,
   "skipped": {},
@@ -280,36 +281,36 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.125,
-   "p95": 0.983,
-   "max": 1.091,
+   "p50": 0.109,
+   "p95": 0.302,
+   "max": 0.463,
    "n": 3000
   },
   "price_feed_gap_s": {
-   "p50": 1.024,
-   "p95": 1.437,
-   "max": 2.008,
+   "p50": 1.033,
+   "p95": 1.466,
+   "max": 5.394,
    "n": 600
   },
   "price_feed_obs_lag_s": {
-   "p50": 1.495,
-   "p95": 2.2,
-   "max": 2.515,
+   "p50": 1.432,
+   "p95": 2.124,
+   "max": 3.117,
    "n": 600
   },
   "price_feed_msgs": {
-   "crypto_prices/list": 4,
-   "crypto_prices_twap_sixty/list": 4,
-   "crypto_prices_chainlink": 26830,
-   "crypto_prices_twap_sixty": 26829
+   "crypto_prices/list": 5,
+   "crypto_prices_twap_sixty/list": 5,
+   "crypto_prices_chainlink": 28602,
+   "crypto_prices_twap_sixty": 28599
   },
-  "price_feed_last_obs_age_s": 2.3,
+  "price_feed_last_obs_age_s": 1.7,
   "load_avg": [
-   0.01,
-   0.05,
-   0.02
+   0.06,
+   0.08,
+   0.01
   ],
-  "price_feed_age_s": 0.7,
-  "order_book_age_s": 0.0
+  "price_feed_age_s": 0.2,
+  "order_book_age_s": 0.6
  }
 }
