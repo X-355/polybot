@@ -1,5 +1,5 @@
 {
- "updated_utc": "2026-11-28 03:53:18",
+ "updated_utc": "2026-11-28 04:23:20",
  "stake_per_trade_usd": 10.0,
  "fee_coef": 0.05,
  "edge": 0.02,
@@ -43,12 +43,12 @@
   "excluded_trades": 6,
   "excluded_reason": "trades without a measured order-book delay (before 27 Nov 2026 ~16:00 UTC) or with delay over 2 s",
   "checks": {
-   "total": 292,
+   "total": 304,
    "trade": 1,
-   "no_trade": 273,
-   "skipped": 18,
+   "no_trade": 283,
+   "skipped": 20,
    "skipped_reasons": {
-    "price feed stale": 18
+    "price feed stale": 20
    }
   }
  },
@@ -262,16 +262,33 @@
  "status": {
   "started_utc": "2026-11-27 18:50:03",
   "errors": [
-   "2026-11-27 20:50:04 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)",
-   "2026-11-27 21:31:05 order book connection: ConnectionClosedError(None, None, None)",
-   "2026-11-27 22:50:08 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)",
-   "2026-11-28 00:50:11 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)",
-   "2026-11-28 02:50:14 price feed connection: ConnectionClosedOK(Close(code=1001, reason='Going away'), Close(code=1001, reason='Going away'), True)"
+   "2026-11-28 04:23:06 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:07 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:07 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:08 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:09 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:10 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:10 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:11 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:12 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:13 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:13 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:14 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:15 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:15 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:16 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:17 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:18 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:18 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:19 no Chainlink price for 15 s; reconnecting",
+   "2026-11-28 04:23:20 no Chainlink price for 15 s; reconnecting"
   ],
-  "decisions": 216,
+  "decisions": 226,
   "trades": 0,
   "settled": 0,
-  "skipped": {},
+  "skipped": {
+   "price feed stale": 2
+  },
   "model": {
    "trained_days": 73,
    "first_day": "2026-09-10",
@@ -281,36 +298,36 @@
   "pending": 0,
   "awaiting_results": 0,
   "book_delay_s": {
-   "p50": 0.101,
-   "p95": 0.127,
-   "max": 0.165,
+   "p50": 0.105,
+   "p95": 0.203,
+   "max": 0.256,
    "n": 3000
   },
   "price_feed_gap_s": {
-   "p50": 1.077,
-   "p95": 1.426,
-   "max": 7.859,
+   "p50": 1.082,
+   "p95": 1.459,
+   "max": 2.605,
    "n": 600
   },
   "price_feed_obs_lag_s": {
-   "p50": 1.464,
-   "p95": 1.959,
-   "max": 2.369,
+   "p50": 1.426,
+   "p95": 1.944,
+   "max": 2.405,
    "n": 600
   },
   "price_feed_msgs": {
    "crypto_prices/list": 5,
    "crypto_prices_twap_sixty/list": 5,
-   "crypto_prices_chainlink": 32154,
-   "crypto_prices_twap_sixty": 32152
+   "crypto_prices_chainlink": 33427,
+   "crypto_prices_twap_sixty": 33422
   },
-  "price_feed_last_obs_age_s": 2.4,
+  "price_feed_last_obs_age_s": 513.7,
   "load_avg": [
-   0.08,
-   0.04,
-   0.0
+   0.03,
+   0.07,
+   0.01
   ],
-  "price_feed_age_s": 0.6,
+  "price_feed_age_s": 512.5,
   "order_book_age_s": 0.0
  }
 }
