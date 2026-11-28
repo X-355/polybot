@@ -1,0 +1,71 @@
+{
+ "test_from": "2024-01-01 00:00:00",
+ "test_to": "2026-10-31 23:35:00",
+ "days": 1034,
+ "rules": {
+  "1.0x": {
+   "trades": 290,
+   "per_day": 0.28,
+   "net_pct": 0.4615,
+   "t_cluster": -0.06,
+   "by_year": {
+    "2024": {
+     "trades": 159,
+     "net_pct": -0.38
+    },
+    "2025": {
+     "trades": 113,
+     "net_pct": 1.602
+    },
+    "2026": {
+     "trades": 18,
+     "net_pct": 0.735
+    }
+   },
+   "by_pair": {
+    "ADABTC": -1.069,
+    "AVAXBTC": 1.32,
+    "BNBBTC": 2.213,
+    "DOGEBTC": 2.249,
+    "DOTBTC": 1.031,
+    "ETHBTC": 0.529,
+    "LINKBTC": 0.606,
+    "LTCBTC": 0.796,
+    "SOLBTC": 0.193,
+    "XRPBTC": -0.721
+   }
+  },
+  "1.5x": {
+   "trades": 185,
+   "per_day": 0.179,
+   "net_pct": 1.4932,
+   "t_cluster": 0.41,
+   "by_year": {
+    "2024": {
+     "trades": 102,
+     "net_pct": -0.128
+    },
+    "2025": {
+     "trades": 74,
+     "net_pct": 3.816
+    },
+    "2026": {
+     "trades": 9,
+     "net_pct": 0.762
+    }
+   },
+   "by_pair": {
+    "ADABTC": 2.413,
+    "AVAXBTC": 2.917,
+    "BNBBTC": 2.213,
+    "DOGEBTC": 5.587,
+    "DOTBTC": 1.742,
+    "ETHBTC": -0.148,
+    "LINKBTC": 1.146,
+    "LTCBTC": 2.068,
+    "SOLBTC": 0.245,
+    "XRPBTC": -0.775
+   }
+  }
+ }
+}
