@@ -1,8 +1,8 @@
 {
- "updated_utc": "2026-11-28 07:00:05",
+ "updated_utc": "2026-11-28 08:00:08",
  "paper_only": true,
  "opened_utc": "2026-11-28 07:00:04",
- "days": 0.0,
+ "days": 0.04,
  "rules": {
   "notional_usd": 10000.0,
   "capital_usd": 20000.0,
@@ -10,20 +10,20 @@
   "futures_fee_pct": 0.05,
   "note": "long BTC spot + short the same BTC on the perpetual; never rebalanced; marked at the prices you could close at"
  },
- "btc_price": 59750.23,
+ "btc_price": 59837.71,
  "qty_btc": 0.167363,
  "spot_entry": 59750.24,
  "perp_entry": 59725.8,
- "funding_received_usd": 0.0,
- "funding_payments": 0,
+ "funding_received_usd": 0.71,
+ "funding_payments": 1,
  "negative_payments": 0,
- "hedge_pnl_usd": -0.02,
- "fees_usd": 30.0,
- "net_if_closed_now_usd": -30.01,
- "net_on_capital_pct": -0.15,
+ "hedge_pnl_usd": -0.17,
+ "fees_usd": 30.02,
+ "net_if_closed_now_usd": -29.48,
+ "net_on_capital_pct": -0.147,
  "funding_annualised_on_notional_pct": null,
  "funding_annualised_on_capital_pct": null,
- "short_margin_used_pct": 0.0,
+ "short_margin_used_pct": 0.1,
  "backtest": {
   "btc_always_on_net_on_capital_pct_by_year": {
    "2021": 18,
@@ -33,6 +33,13 @@
   },
   "source": "research/results/funding/funding_carry.json"
  },
- "recent_payments": [],
+ "recent_payments": [
+  {
+   "time_utc": "2026-11-28 08:00",
+   "rate_pct": 0.00707,
+   "mark": 59817.04,
+   "usd": 0.7079
+  }
+ ],
  "errors": []
 }
