@@ -1,0 +1,86 @@
+name: Study re-test with order-book delay (research)
+on:
+  workflow_dispatch:
+    inputs:
+      only_days: { description: "Comma list of days (blank = all well-covered days)", default: "" }
+      chunk: { description: "Days per job", default: "2" }
+permissions:
+  contents: write
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      chunks: ${{ steps.p.outputs.chunks }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q huggingface_hub
+      - id: p
+        run: python research/plan.py
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          COIN: BTC
+          ONLY_DAYS: ${{ inputs.only_days }}
+          CHUNK: ${{ inputs.chunk }}
+  extract:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        days: ${{ fromJson(needs.plan.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: sudo apt-get install -y -q pigz && pip install -q huggingface_hub orjson requests
+      - run: python research/extract.py "${{ matrix.days }}"
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          COIN: BTC
+      - id: name
+        run: echo "n=$(echo '${{ matrix.days }}' | cut -d, -f1)" >> $GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lag_BTC_${{ steps.name.outputs.n }}
+          path: pm_out/
+          retention-days: 30
+  analyze:
+    needs: extract
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q pandas numpy scikit-learn
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: lag_BTC_*
+          path: pm_out
+          merge-multiple: true
+      - name: Analyse with and without stale snapshots
+        env:
+          COIN: BTC
+          OUT: research/results
+        run: |
+          for lag in inf 2 0.5; do
+            for split in forward reverse; do
+              tag=""; [ "$lag" != "inf" ] && tag="_lag$lag"
+              LAG_MAX=$lag SPLIT=$split TAG=$tag python research/analyze_pm.py > /tmp/out_${lag}_${split}.txt 2>&1 || cat /tmp/out_${lag}_${split}.txt
+              grep -E "^LAG|rows|split" /tmp/out_${lag}_${split}.txt | head -3
+            done
+          done
+          python research/compare.py
+      - name: Commit results
+        run: |
+          git config user.name research-bot; git config user.email research-bot@users.noreply.github.com
+          cp -r research/results /tmp/res
+          git fetch -q origin main && git reset -q --hard origin/main
+          mkdir -p research && rm -rf research/results && cp -r /tmp/res research/results
+          git add research/results
+          git commit -m "Study re-test with order-book delay $(date -u +%F)" || echo "nothing to commit"
+          git push
