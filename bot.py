@@ -386,6 +386,11 @@ async def settler():
 # ---------------------------------------------------------------- the pre-registered test
 MIN_TRADES = 300      # no verdict before this many settled trades
 MAX_TRADES = 1000     # by this many, an unproven edge is called "not proven" and the test ends
+# Early-stop rule, added 28 Nov 2026 (before results): the backtest (order-book delay <= 2 s, edge > 2c) traded in
+# 4.9% of 5-minute windows (30 s and 10 s checks together). If two weeks after the freshness check began the bot has
+# traded in fewer than a third of that, the backtest's opportunities are not showing up live and the test stops.
+EXPECTED_RATE = 0.049
+EARLY_STOP_AT = "2026-12-11 15:40:00"     # UTC, 14 days after the freshness check went live
 
 
 def ret_per_dollar(price, win):
@@ -429,11 +434,36 @@ def controls(rows):
     return dict(favourite=cluster_ci(rows, fav), coin_flip=cluster_ci(rows, coin))
 
 
+def windows_checked():
+    """Five-minute windows where the bot made a real decision (not skipped) since the freshness check."""
+    w = set()
+    try:
+        for r in csv.DictReader(open(os.path.join(DATA, "decisions.csv"))):
+            if r["status"] in ("trade", "no trade"):
+                w.add(r["window_start"])
+    except FileNotFoundError:
+        pass
+    return len(w)
+
+
+def activity(n):
+    w = windows_checked()
+    exp = EXPECTED_RATE * w
+    return dict(windows=w, trades=n, expected=round(exp, 1), ratio=round(n / exp, 2) if exp else None)
+
+
 def verdict(rows):
     c = cluster_ci(rows, conservative)
     n = len(rows)
+    act = activity(n)
+    if utc() >= EARLY_STOP_AT and n < MIN_TRADES and act["expected"] and n < act["expected"] / 3:
+        return dict(state="stopped_low_activity", stats=c, activity=act,
+                    text=f"Stopped early (rule set 28 Nov): after two weeks the bot made {n} trades where the backtest "
+                         f"predicted about {act['expected']:.0f}. The backtest's opportunities are not showing up live.")
     if not c or n < MIN_TRADES:
-        return dict(state="collecting", text=f"Collecting: {n} of {MIN_TRADES} trades needed before any verdict.", stats=c)
+        return dict(state="collecting", stats=c, activity=act,
+                    text=f"Collecting: {n} of {MIN_TRADES} trades needed before any verdict. Activity check on {EARLY_STOP_AT[:10]}: "
+                         f"{n} trades so far vs about {act['expected']:.0f} expected from the backtest.")
     ctl = controls(rows)["favourite"]
     if c["lo"] is not None and c["lo"] > 0 and (ctl is None or c["mean"] > ctl["mean"]):
         return dict(state="edge", text="Edge confirmed: profitable after fees at the worse fill, 95% interval above zero, and better than always buying the favourite.", stats=c)
@@ -473,7 +503,9 @@ def summarize():
     test = dict(rule=(f"Pre-registered (27 Nov 2026): no verdict before {MIN_TRADES} settled trades. Trades are scored at the worse of "
                       "the price at the signal and one second later, after Polymarket's taker fee. Edge confirmed only if the 95% interval "
                       "of return per $1 (windows treated as clusters) is above zero AND beats always buying the favourite on the same "
-                      f"windows. Interval below zero = no edge. Still unclear at {MAX_TRADES} trades = not proven, test ends."),
+                      f"windows. Interval below zero = no edge. Still unclear at {MAX_TRADES} trades = not proven, test ends. "
+                      f"Added 28 Nov 2026 before further results: if on {EARLY_STOP_AT[:10]} the bot has made fewer than a third of "
+                      f"the trades the backtest predicts ({EXPECTED_RATE:.1%} of checked windows), the test stops early."),
                 verdict=verdict(rows), conservative=cluster_ci(rows, conservative), controls=controls(rows),
                 stake_fits_at_best_ask_pct=round(100 * len(fits) / len(rows), 1) if rows else None,
                 excluded_trades=len(all_rows) - len(rows),
