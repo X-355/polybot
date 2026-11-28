@@ -26,3 +26,18 @@ jobs:
           elif [ -n "$open" ]; then
             gh issue close "$open" -R ${{ github.repository }} --comment "Reporting again (last report $age minutes ago)."
           fi
+      - name: ALT/BTC bot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f data/altbtc/summary.json ] || { echo "ALT/BTC bot not reporting yet"; exit 0; }
+          age=$(python3 -c "import json,datetime as d;u=json.load(open('data/altbtc/summary.json'))['updated_utc'];t=d.datetime.strptime(u,'%Y-%m-%d %H:%M:%S').replace(tzinfo=d.timezone.utc);print(int((d.datetime.now(d.timezone.utc)-t).total_seconds()//60))")
+          echo "ALT/BTC last report $age minutes ago"
+          gh label create altbot-down -R ${{ github.repository }} --color B60205 --description "ALT/BTC bot stopped reporting" 2>/dev/null || true
+          open=$(gh issue list -R ${{ github.repository }} --label altbot-down --state open --json number -q '.[0].number')
+          if [ "$age" -gt 120 ]; then
+            [ -n "$open" ] || gh issue create -R ${{ github.repository }} --label altbot-down --title "ALT/BTC bot has not reported for $age minutes" \
+              --body "Publishes every 30 minutes. On the server run: sudo systemctl status altbot --no-pager; sudo journalctl -u altbot -n 40 --no-pager"
+          elif [ -n "$open" ]; then
+            gh issue close "$open" -R ${{ github.repository }} --comment "Reporting again ($age minutes ago)."
+          fi

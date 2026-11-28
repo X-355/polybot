@@ -40,3 +40,25 @@ So the result can be trusted whichever way it goes, the rules were fixed before 
 The running verdict is in `data/summary.json` under `test`.
 
 Research only, not financial advice.
+
+## ALT/BTC paper bot (`altbot/`) — no real money
+
+A second paper test on the same server. It checks one idea with rules fixed in advance: a frozen
+gradient-tree model (trained on Binance 5-minute candles 2021 – Oct 2026) predicts the next 15 minutes of 10
+ALT/BTC pairs (ETH, BNB, SOL, XRP, ADA, DOGE, LTC, LINK, DOT, AVAX against BTC).
+
+**Rules (decided before the first trade, not changed afterwards)**
+- At every 5-minute candle close: trade only if |predicted 15-min move| > 1.0 × (0.3% + one price step).
+- Prices are the real best ask (to buy) or best bid (to sell) from Binance, the worse of two quotes 1 s apart,
+  both when opening and when closing 15 minutes later. Binance fee 0.1% each way. Results in BTC terms.
+- One open position per pair. Skips: missing candles, candle arrived >10 s late, bid/ask older than 60 s.
+- Start-up self-check: the bot refuses to trade unless its own feature code reproduces the training numbers.
+- Control: on every trade, a coin-flip side on the same pair at the same moment, priced the same way.
+- Verdict after 200 trades (final at 600): edge only if the 95% confidence interval of the mean net per
+  trade (clustered by candle, since pairs often move together) is above zero.
+- Activity check: after 30 days, stop if trades are fewer than one third of the expected pace.
+
+**What the backtest says to expect (honest):** run the way the bot trades (every candle, one position per
+pair, entering one candle late), 2024 – Oct 2026 gave 290 trades (0.28 a day), +0.46% average per trade —
+but 2024 was negative (−0.38%) and most of the profit came from a few sharp moves in 2025 when many pairs
+moved together. So a verdict will take a long time, and the most likely result is "no edge".

@@ -32,3 +32,29 @@ CODE=$(cat *.py requirements.txt model/* 2>/dev/null | sha256sum | cut -c1-16)
 if [ "$(cat $STATE/code 2>/dev/null)" != "$CODE" ] || ! systemctl is-active -q polybot; then
   systemctl restart polybot && echo "$CODE" > $STATE/code
 fi
+
+# ---- ALT/BTC paper bot (separate service, same venv) ----
+mkdir -p /opt/polybot/altdata
+cat > /tmp/altbot.service <<UNITEOF
+[Unit]
+Description=ALT/BTC paper-trading research bot (no real money)
+After=network-online.target
+Wants=network-online.target
+[Service]
+WorkingDirectory=$REPO/altbot
+Environment=ALTBOT_DATA=/opt/polybot/altdata
+ExecStart=$VENV/bin/python -u altbot.py
+Restart=always
+RestartSec=15
+MemoryMax=250M
+[Install]
+WantedBy=multi-user.target
+UNITEOF
+AUNIT=/etc/systemd/system/altbot.service
+if [ -f altbot/model/alt15.joblib ]; then
+  if ! cmp -s /tmp/altbot.service $AUNIT; then cp /tmp/altbot.service $AUNIT; systemctl daemon-reload; systemctl enable -q altbot; fi
+  ACODE=$(cat altbot/*.py altbot/model/* requirements.txt 2>/dev/null | sha256sum | cut -c1-16)
+  if [ "$(cat $STATE/altcode 2>/dev/null)" != "$ACODE" ] || ! systemctl is-active -q altbot; then
+    systemctl restart altbot && echo "$ACODE" > $STATE/altcode
+  fi
+fi

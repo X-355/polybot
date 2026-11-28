@@ -546,14 +546,18 @@ def publish(push=True):
         print(json.dumps(out["status"], indent=1))
         return
     g = lambda *a: subprocess.run(["git", "-C", REPO, *a], capture_output=True, text=True, timeout=120)
-    g("add", "data")
-    if g("diff", "--cached", "--quiet").returncode == 0:
-        return
-    g("commit", "-q", "-m", f"Paper log {utc()} UTC")
-    r = g("pull", "-q", "--rebase", "--autostash")
-    r = g("push", "-q")
-    if r.returncode:
-        S.err("push failed: " + r.stderr.strip()[:200])
+    import fcntl
+    os.makedirs("/opt/polybot/state", exist_ok=True)
+    with open("/opt/polybot/state/git.lock", "w") as lk:      # shared with the ALT/BTC bot so pushes never collide
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        g("add", "data")
+        if g("diff", "--cached", "--quiet").returncode == 0:
+            return
+        g("commit", "-q", "-m", f"Paper log {utc()} UTC")
+        r = g("pull", "-q", "--rebase", "--autostash")
+        r = g("push", "-q")
+        if r.returncode:
+            S.err("push failed: " + r.stderr.strip()[:200])
 
 
 async def publisher():
